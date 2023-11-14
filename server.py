@@ -20,43 +20,41 @@ EVAL_FINISHED_POST_SYNC = 202
 PARTY_CLOSING = 404
 STOP_POWER_COLLECTION = 300
 
+ips = {
+    "user": "10.8.1.46",
+    "rpi1": "10.8.1.38",
+    "rpi3": "10.8.1.192",
+}
+
+ports_listening = {
+    "rpi1": 6012,
+    "rpi3": 6013,
+}
+
+broadcast_port = 6011
+aggregator_ip = ips.get("user")
+
+# Data Generation
+validDatasets = {"mnist", "cifar10"}
+valid_fusion_algos = {
+    fl.server.strategy.FedAvg,
+    fl.server.strategy.FedProx,
+    fl.server.strategy.FedAdagrad,
+    fl.server.strategy.FedXgbNnAvg,
+}
+
+# Parameters
+rounds = 3
+epochs = 4
+
 dataset = "mnist"
-num_parties: int = 4
-datapoints_per_party = 500
-model = "tf"
-fusion = "iter_avg"
+num_parties: int = 2
+batch_size = 500
+fusion = fl.server.strategy.FedAvg
 run = "0"
 
-parser = argparse.ArgumentParser(description="Flower Embedded devices")
-parser.add_argument(
-    "--server_address",
-    type=str,
-    default="0.0.0.0:8080",
-    help=f"gRPC server address (deafault '0.0.0.0:8080')",
-)
-parser.add_argument(
-    "--rounds",
-    type=int,
-    default=5,
-    help="Number of rounds of federated learning (default: 5)",
-)
-parser.add_argument(
-    "--sample_fraction",
-    type=float,
-    default=1.0,
-    help="Fraction of available clients used for fit/evaluate (default: 1.0)",
-)
-parser.add_argument(
-    "--min_num_clients",
-    type=int,
-    default=2,
-    help="Minimum number of available clients required for sampling (default: 2)",
-)
-parser.add_argument(
-    "--mnist",
-    action="store_true",
-    help="If you use Raspberry Pi Zero clients (which just have 512MB or RAM) use MNIST",
-)
+sample_fraction = 1.0
+min_num_clients = num_parties
 
 
 # Define metric aggregation function
@@ -72,23 +70,42 @@ def weighted_average(metrics: List[Tuple[int, Metrics]]) -> Metrics:
     return {"accuracy": sum(accuracies) / sum(examples)}
 
 
-def fit_config(server_round: int):
+def fit_config(server_round: int, *_, epochs: int = None, batch_size: int = None):
     """Return a configuration with static batch size and (local) epochs."""
     config = {
-        "epochs": 3,  # Number of local epochs done by clients
-        "batch_size": 16,  # Batch size to use by clients during fit()
+        "epochs": epochs if epochs else 4,  # Number of local epochs done by clients
+        "batch_size": batch_size
+        if batch_size
+        else 16,  # Batch size to use by clients during fit()
     }
     return config
 
 
 def main():
+
+    print("\n" * 3)
     
+    if num_parties != len(ips) - 1:
+        print("""WARNING! Number of parties and number of provided IPs do not match.""")
+        print("""Change the dictionary of IPs in this python script rfn""")
+        input("Press Enter to Exit")
+        sys.exit()
+
+    print(
+        f"""
+      {'' if run is None else f'{run=}'}
+      {dataset=}
+      {num_parties=}
+      {batch_size=}
+      {fusion=}
+      """
+    )
 
     # Define strategy
     strategy = fl.server.strategy.FedAvg(
-        fraction_fit=args.sample_fraction,
-        fraction_evaluate=args.sample_fraction,
-        min_fit_clients=args.min_num_clients,
+        fraction_fit=sample_fraction,
+        fraction_evaluate=sample_fraction,
+        min_fit_clients=min_num_clients,
         on_fit_config_fn=fit_config,
         evaluate_metrics_aggregation_fn=weighted_average,
     )
@@ -103,103 +120,17 @@ def main():
 
 if __name__ == "__main__":
     main()
-    
-    
+    sys.exit()
 
 
-
-
-def main(args):
+def main2(args):
     global dataset, num_parties, datapoints_per_party, model, fusion
-    try:
-        if int(args[1]):
-            run = args[1]
-            print(f"Run number : {run}")
-        else:
-            run = None
-    except (IndexError, ValueError):
-        run = None
-
-    ips = {
-        "user": "10.8.1.46",
-        "pi2": "10.8.1.35",
-        "pi3": "10.8.1.200",
-        "pi4": "10.8.1.158",
-        "pi5": "10.8.1.207",
-    }
-
-    ports_listening = {
-        "pi2": 6012,
-        "pi3": 6013,
-        "pi4": 6014,
-        "pi5": 6015,
-    }
-
-    broadcast_port = 6011
-
-    aggregator_ip = ips.get("user")
-
-    # Data Generation
-
-    validDatasets = {"mnist"}
-    valid_fusion_algos = {
-        "iter_avg",
-        "iter_avg_openshift",
-        "fedavg",
-        "coordinate_median",
-        "gradient_aggregation",
-        "krum",
-        "pfnm",
-        "zeno",
-        "fedprox",
-        "fedavgplus",
-        "differential_privacy_sgd",
-        "rl_cartpole",
-        "rl_pendulum",
-        "sklearn_logclassification_rw",
-        "sklearn_logclassification_globalrw",
-        "spahm",
-        "naive_bayes_dp",
-        "id3_dt",
-        "prej_remover",
-        "shuffle_iter_avg",
-        "coordinate_median_plus",
-        "geometric_median_plus",
-        "doc2vec",
-        "comparative_elimination",
-        "afa",
-        "fhe_iter_avg",
-        "fhe_iter_avg_openshift",
-    }
-
-    if len(args) == 7:
-        print("Sufficient Arguments passed, printing arguments")
-        dataset = args[2]
-        num_parties = int(args[3])
-        datapoints_per_party = int(args[4])
-        model = args[5]
-        fusion = args[6]
+    
 
     print("\n\n\n")
     time.sleep(3)
-    print(
-        f"""
-      {'' if run is None else f'{run=}'}
-      {dataset=}
-      {num_parties=}
-      {datapoints_per_party=}
-      {model=}
-      {fusion=}
-      """
-    )
-    print("\n\n\n")
-    time.sleep(3)
 
-    if num_parties != len(ips) - 1:
-        print("""WARNING! Number of parties and number of provided IPs do not match.""")
-        print("""Change the dictionary of IPs in this python script rfn""")
-        input("Press Enter to Exit")
-        sys.exit()
+    
 
     if run is None:
         input(
@@ -314,7 +245,7 @@ def main(args):
     broadcast.send_pyobj(BEGIN_EVAL)
     # Eval will take place and we have to sync, lets wait for parties to respond
     wait_until_ready(EVAL_FINISHED, msg="Waiting for parties to finish Evaluations")
-    
+
     broadcast.send_pyobj(BEGIN_EVAL_POST_SYNC)
     wait_until_ready(
         EVAL_FINISHED_POST_SYNC,
