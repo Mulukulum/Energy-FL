@@ -95,7 +95,26 @@ def fit_config(
     return config
 
 
-def main():
+def main(args: dict = None):
+    '''
+    Pass args as a dictionary with the keys : 
+    
+    ```
+    rounds
+    epochs
+    run
+    dataset
+    batch_size
+    fusion
+    model
+    sample_fraction
+    ```
+    
+    '''
+    if args is not None:
+        for key,val in args.items():
+            exec(key + "=" + str(val) ) # This is bad but its quick
+
     print("\n" * 3)
 
     if num_parties != len(ips) - 1:
@@ -121,10 +140,13 @@ def main():
     print(
         f"""
       {'' if run is None else f'{run=}'}
+      {rounds=}
+      {epochs=}
       {dataset=}
       {num_parties=}
       {batch_size=}
       {fusion=}
+      {model=}
       """
     )
 
@@ -202,92 +224,47 @@ def main():
         print("Finished Waiting")
 
     # Start Flower server
+
+    sar = subprocess.Popen(["./Functions/sar_collector.sh"], stdin=subprocess.PIPE)
+    power = subprocess.Popen(["./Functions/power_collector.sh", "0.5"])
+
     fl.server.start_server(
         server_address=args.server_address,
         config=fl.server.ServerConfig(num_rounds=3),
         strategy=strategy,
     )
 
-    sar = subprocess.Popen(["./Functions/sar_collector.sh"], stdin=subprocess.PIPE)
-    power = subprocess.Popen(["./Functions/power_collector.sh", "0.5"])
-    
-
-
-if __name__ == "__main__":
-    main()
-    sys.exit()
-
-
-def main2(args):
-    # Run batch.sh manually first
-    # Generate Data on Agg
-
-    # Waits until all parties are ready for training
-
-    # Starting Power collection
-
-    print("Power Collection Started")
-    time.sleep(3)
-    # Start Collecting SAR Data
-    print("SAR STARTED, waiting 20 seconds to begin training")
-
-    time.sleep(20)
-
-    # Stop Collecting SAR Data
     sar.communicate(b"\n")
-    sar.wait()
-    print("SAR FINISHED")
-    # Stopping power data
     broadcast.send_pyobj(STOP_POWER_COLLECTION)
+    sar.wait()
     power.wait()
-    print("POWER COLLECTION FINISHED")
 
-    # Training is finished,  let's send the signal to begin evaluation
-    broadcast.send_pyobj(BEGIN_EVAL)
-    # Eval will take place and we have to sync, lets wait for parties to respond
-    wait_until_ready(EVAL_FINISHED, msg="Waiting for parties to finish Evaluations")
-
-    broadcast.send_pyobj(BEGIN_EVAL_POST_SYNC)
-    wait_until_ready(
-        EVAL_FINISHED_POST_SYNC,
-        msg="Waiting for parties to finish Postsync Evaluations",
-    )
-
-    # Now that all the evals are done, we can shutdown the aggregator after parties are done
-    wait_until_ready(PARTY_CLOSING, msg="Waiting for parties to close")
-
-    print("\n\nStopping Aggregator\n\n")
-    time.sleep(3)
-
-    for user, ip in ips.items():
-        if user != "user":
-            subprocess.run(f"./Functions/files_copier.sh {user} {ip}", shell=True)
-
-    # Shutdown all the sockets
     for listener in listeners:
         try:
             listener.close()
         except Exception:
             print("Close Failed")
-
     broadcast.close()
     agg_context.term()
-    print("Done!")
 
-    # Everything is now terminated
-    # Now we can parse all the collected Data
+    for user, ip in ips.items():
+        if user != "user":
+            subprocess.run(f"./Functions/files_copier.sh {user} {ip}", shell=True)
 
     if run is None:
-        fname = f"{fusion}_{model}_{datapoints_per_party}_{num_parties}_{dataset}"
+        fname = f"{fusion}_{model}_{batch_size}_{num_parties}_{dataset}"
     else:
-        fname = f"{fusion}_{model}_{datapoints_per_party}_{num_parties}_{dataset}_{run}"
+        fname = f"{fusion}_{model}_{batch_size}_{num_parties}_{dataset}_{run}"
 
-    print("Starting parsing of data")
+    from Functions import Parser
+
     Parser.main(
         party_usernames=list(ips.keys()),
         name=fname,
         sar_timeseries_userlist=list(ips.keys()),
     )
-    print("Parsing Complete")
-    print("Exiting Now")
-    return
+
+
+if __name__ == "__main__":
+    main()
+    sys.exit()
