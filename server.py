@@ -152,7 +152,7 @@ def main(args: dict = None):
     )
 
     # Define strategy
-    strategy = fl.server.strategy.FedAvg(
+    strategy = fusion(
         fraction_fit=sample_fraction,
         fraction_evaluate=sample_fraction,
         min_fit_clients=min_num_clients,

@@ -132,6 +132,9 @@ def main():
         server_address=args.server_address,
         client=FlowerClient(trainset=trainset, valset=valset, use_mnist=use_mnist),
     )
+    
+    
+    # Evaluate the results and store them into disk now
 
 
 if __name__ == "__main__":
