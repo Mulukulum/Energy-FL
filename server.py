@@ -32,6 +32,7 @@ ports_listening = {
 }
 
 broadcast_port = 6011
+aggregator_username = "user"
 aggregator_ip = ips.get("user")
 
 # Data Generation
@@ -173,28 +174,8 @@ def main(args: dict = None):
     except OSError as e:
         print(f"OSError Occurred, Error {e}")
 
-    party_id = 0
-    for user, ip in ips.items():
-        if user == "user":
-            continue
-        subp = subprocess.Popen(
-            [
-                "./Functions/pi_runner.sh",
-                fusion,
-                model,
-                str(num_parties),
-                dataset,
-                aggregator_ip,
-                ip,
-                str(broadcast_port),
-                str(ports_listening.get(user)),
-                user,
-                str(party_id),
-                str(datapoints_per_party),
-            ]
-        )
-        party_id += 1
-        time.sleep(2)
+    
+        
 
     # We listen for the the parties to confirm they actually did stuff
     def wait_until_ready(value, msg=None) -> None:
@@ -227,6 +208,28 @@ def main(args: dict = None):
 
     sar = subprocess.Popen(["./Functions/sar_collector.sh"], stdin=subprocess.PIPE)
     power = subprocess.Popen(["./Functions/power_collector.sh", "0.5"])
+    party_id = 0
+    for user, ip in ips.items():
+        if user == aggregator_username:
+            continue
+        subp = subprocess.Popen(
+            [
+                "./Functions/pi_runner.sh",
+                fusion,
+                model,
+                str(num_parties),
+                dataset,
+                aggregator_ip,
+                ip,
+                str(broadcast_port),
+                str(ports_listening.get(user)),
+                user,
+                str(party_id),
+                str(batch_size),
+            ]
+        )
+        party_id += 1
+        time.sleep(2)
 
     fl.server.start_server(
         server_address=args.server_address,
@@ -238,6 +241,10 @@ def main(args: dict = None):
     broadcast.send_pyobj(STOP_POWER_COLLECTION)
     sar.wait()
     power.wait()
+    
+    # FL Training is Done, now for the evaluations
+    
+    
 
     for listener in listeners:
         try:
@@ -248,7 +255,7 @@ def main(args: dict = None):
     agg_context.term()
 
     for user, ip in ips.items():
-        if user != "user":
+        if user != aggregator_username:
             subprocess.run(f"./Functions/files_copier.sh {user} {ip}", shell=True)
 
     if run is None:

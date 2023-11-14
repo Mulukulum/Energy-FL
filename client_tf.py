@@ -7,30 +7,34 @@ import tensorflow as tf
 from tensorflow import keras as keras
 
 parser = argparse.ArgumentParser(description="Flower Embedded devices")
-parser.add_argument(
-    "--server_address",
-    type=str,
-    default="0.0.0.0:8080",
-    help=f"gRPC server address (deafault '0.0.0.0:8080')",
-)
-parser.add_argument(
-    "--cid",
-    type=int,
-    required=True,
-    help="Client id. Should be an integer between 0 and NUM_CLIENTS",
-)
-parser.add_argument(
-    "--mnist",
-    action="store_true",
-    help="If you use Raspberry Pi Zero clients (which just have 512MB or RAM) use MNIST",
-)
+
+def add_parser_args(p):
+    p.add_argument(
+        "--agg_ip",
+        type=str,
+        default="0.0.0.0:8080",
+        help=f"gRPC server address (deafault '0.0.0.0:8080')",
+    )
+    p.add_argument(
+        "--cid",
+        type=int,
+        required=True,
+        help="Client id. Should be an integer between 0 and NUM_CLIENTS",
+    )
+    p.add_argument(
+        "--dataset",
+        type=str,
+        help="Choose a dataset from the list of valid datasets",
+    )
+    
+add_parser_args(parser)
 
 warnings.filterwarnings("ignore", category=UserWarning)
-NUM_CLIENTS = 50
-
 
 def prepare_dataset(use_mnist: bool):
     """Download and partitions the CIFAR-10/MNIST dataset."""
+    global NUM_CLIENTS
+    
     if use_mnist:
         (x_train, y_train), testset = tf.keras.datasets.mnist.load_data()
     else:
@@ -113,7 +117,8 @@ class FlowerClient(fl.client.NumPyClient):
 
 def main():
     args = parser.parse_args()
-    print(args)
+    
+    args
 
     assert args.cid < NUM_CLIENTS
 
