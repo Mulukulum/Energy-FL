@@ -7,11 +7,8 @@ color='\033[1;31m' # set the color to bold red
 
 # Define the list of hosts to run the SAR command on
 hosts=("10.8.1.46" "10.8.1.35" "10.8.1.200" "10.8.1.158" "10.8.1.207")
-#hosts=("10.8.1.46" "10.8.1.35" "10.8.1.207")
-
 # Define the usernames for each host
-usernames=("user" "pi2" "pi3" "pi4" "pi5")
-#usernames=("user" "pi2" "pi5")
+usernames=("user" "rpi1" "rpi3")
 
 # Define the remote command to run SAR and collect data
 remote_cmd=$(cat << 'END_CMD'
@@ -22,14 +19,6 @@ wait
 END_CMD
 )
 
-#For different command
-remote_cmd2=$(cat << 'END_CMD'
-trap "exit" INT
-sar -u -r -d --dev=sda -n DEV --iface=enp2s0 -h 1 > "$USER-sar.txt" &
-echo "SAR data collection started on $HOSTNAME."
-wait
-END_CMD
-)
 
 # Start collecting data on all hosts
 for ((i=0;i<${#hosts[@]};++i)); do

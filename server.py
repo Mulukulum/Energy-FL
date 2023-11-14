@@ -35,26 +35,38 @@ broadcast_port = 6011
 aggregator_ip = ips.get("user")
 
 # Data Generation
-validDatasets = {"mnist", "cifar10"}
+valid_datasets = {"mnist", "cifar10"}
 valid_fusion_algos = {
-    fl.server.strategy.FedAvg,
-    fl.server.strategy.FedProx,
-    fl.server.strategy.FedAdagrad,
-    fl.server.strategy.FedXgbNnAvg,
+    "FedAvg",
+    "FedProx",
+    "FedAdagrad",
+    "FedXgbNnAvg",
 }
+
+fusion_algos_translator = {
+    "FedAvg": fl.server.strategy.FedAvg,
+    "FedProx": fl.server.strategy.FedProx,
+    "FedAdagrad": fl.server.strategy.FedAdagrad,
+    "FedXgbNnAvg": fl.server.strategy.FedXgbNnAvg,
+}
+
+
+valid_models = {"tf-cnn"}
 
 # Parameters
 rounds = 3
 epochs = 4
+run = "0"
 
 dataset = "mnist"
 num_parties: int = 2
-batch_size = 500
-fusion = fl.server.strategy.FedAvg
-run = "0"
-
+batch_size = 512
+fusion = "FedAvg"
+model = "tf-cnn"
 sample_fraction = 1.0
+
 min_num_clients = num_parties
+fusion = fusion_algos_translator[fusion]
 
 
 # Define metric aggregation function
@@ -70,7 +82,9 @@ def weighted_average(metrics: List[Tuple[int, Metrics]]) -> Metrics:
     return {"accuracy": sum(accuracies) / sum(examples)}
 
 
-def fit_config(server_round: int, *_, epochs: int = None, batch_size: int = None):
+def fit_config(
+    server_round: int, *_, epochs: int = epochs, batch_size: int = batch_size
+):
     """Return a configuration with static batch size and (local) epochs."""
     config = {
         "epochs": epochs if epochs else 4,  # Number of local epochs done by clients
@@ -82,14 +96,27 @@ def fit_config(server_round: int, *_, epochs: int = None, batch_size: int = None
 
 
 def main():
-
     print("\n" * 3)
-    
+
     if num_parties != len(ips) - 1:
         print("""WARNING! Number of parties and number of provided IPs do not match.""")
         print("""Change the dictionary of IPs in this python script rfn""")
         input("Press Enter to Exit")
         sys.exit()
+
+    if run is None:
+        input(
+            """
+          Note : If you need SAR Timeseries data for multiple devices,
+          specify that in the sar_timeseries_userlist at the end of the file
+          Add each username as a string into the list
+          Don't forget to change the following Scripts
+          1.) sar_collector.sh [located in the Functions Directory]
+          2.) The 'ips' dictionary of this python file. Leave only those IPs that are participating
+          3.) The 'ports_listening' dictionary of this python file. Leave only the parties that are participating
+          Edit the hosts and IPs list in these files if required and Press Enter to continue\n
+          """
+        )
 
     print(
         f"""
@@ -109,49 +136,6 @@ def main():
         on_fit_config_fn=fit_config,
         evaluate_metrics_aggregation_fn=weighted_average,
     )
-
-    # Start Flower server
-    fl.server.start_server(
-        server_address=args.server_address,
-        config=fl.server.ServerConfig(num_rounds=3),
-        strategy=strategy,
-    )
-
-
-if __name__ == "__main__":
-    main()
-    sys.exit()
-
-
-def main2(args):
-    global dataset, num_parties, datapoints_per_party, model, fusion
-    
-
-    print("\n\n\n")
-    time.sleep(3)
-
-    
-
-    if run is None:
-        input(
-            """
-          Note : If you need SAR Timeseries data for multiple devices,
-          specify that in the sar_timeseries_userlist at the end of the file
-          Add each username as a string into the list
-          Don't forget to change the following Scripts
-          1.) pi_cache_port.sh [located in the Functions Directory]
-          2.) sar_collector.sh [located in the Functions Directory]
-          3.) The 'ips' dictionary of this python file. Leave only those IPs that are participating
-          4.) The 'ports_listening' dictionary of this python file. Leave only the parties that are participating
-          Edit the hosts and IPs list in these files if required and Press Enter to continue\n
-          """
-        )
-        input("Are you absolutely sure you changed everything? Press Enter to continue")
-        input(
-            "Last chance to edit stuff. If you're done, press Enter to run the experiment"
-        )
-    # Run batch.sh manually first
-    # Generate Data on Agg
 
     agg_context = zmq.Context()
     listeners = []
@@ -217,19 +201,36 @@ def main2(args):
                 time.sleep(15)
         print("Finished Waiting")
 
+    # Start Flower server
+    fl.server.start_server(
+        server_address=args.server_address,
+        config=fl.server.ServerConfig(num_rounds=3),
+        strategy=strategy,
+    )
+
+    sar = subprocess.Popen(["./Functions/sar_collector.sh"], stdin=subprocess.PIPE)
+    power = subprocess.Popen(["./Functions/power_collector.sh", "0.5"])
+    
+
+
+if __name__ == "__main__":
+    main()
+    sys.exit()
+
+
+def main2(args):
+    # Run batch.sh manually first
+    # Generate Data on Agg
+
     # Waits until all parties are ready for training
 
-    wait_until_ready(PARTY_STARTED, msg="Waiting for all parties to start and register")
-
     # Starting Power collection
-    power = subprocess.Popen(
-        ["./Functions/power_collector.sh", "0.4"],
-    )
+
     print("Power Collection Started")
     time.sleep(3)
     # Start Collecting SAR Data
     print("SAR STARTED, waiting 20 seconds to begin training")
-    sar = subprocess.Popen(["./Functions/sar_collector.sh"], stdin=subprocess.PIPE)
+
     time.sleep(20)
 
     # Stop Collecting SAR Data
