@@ -1,12 +1,11 @@
 #!/bin/bash
 
 echo "user123" | sudo -S pwd
-echo "" 
 
 color='\033[1;31m' # set the color to bold red
 
 # Define the list of hosts to run the SAR command on
-hosts=("10.8.1.46" "10.8.1.35" "10.8.1.200" "10.8.1.158" "10.8.1.207")
+hosts=("10.8.1.46" "10.8.1.38" "10.8.1.192")
 # Define the usernames for each host
 usernames=("user" "rpi1" "rpi3")
 
@@ -65,9 +64,9 @@ for ((i=0;i<${#hosts[@]};++i)); do
     host=${hosts[i]}
     username=${usernames[i]}
     if [ "$username" = "user" ]; then
-	mv -f $username-sar.txt /home/user/Desktop/federated-learning-lib/Outputs/SAR/$username-sar.txt
+	mv -f $username-sar.txt /home/user/Desktop/Energy-FL/Outputs/SAR/$username-sar.txt
     else
-    	scp $username@$host:$username-sar.txt /home/user/Desktop/federated-learning-lib/Outputs/SAR/
+    	scp $username@$host:$username-sar.txt /home/user/Desktop/Energy-FL/Outputs/SAR/
     fi
     echo "";
     echo -e "SAR data file transferred from ${color1}${host}\033[0m."
@@ -101,7 +100,7 @@ awk '/^Average:/ {
     getline
     print $2, $3
   }
-}' /home/user/Desktop/federated-learning-lib/Outputs/SAR/$username-sar.txt | column -t
+}' /home/user/Desktop/Energy-FL/Outputs/SAR/$username-sar.txt | column -t
 done
 echo "";
 echo "All SAR data files collected."
