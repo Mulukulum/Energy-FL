@@ -134,8 +134,6 @@ def main(args: dict = None):
         sample_fraction = args['sample_fraction']        
         
     print("\n" * 3)
-    print(f'{run=}')
-    print(dataset, model, fusion, sample_fraction, num_parties, batch_size, epochs, rounds, run)
 
     if run == None:
         input(
