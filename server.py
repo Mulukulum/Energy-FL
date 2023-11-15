@@ -54,7 +54,7 @@ rounds = 3
 epochs = 4
 run = "0"
 
-dataset = "cifar10"
+dataset = "mnist"
 num_parties: int = len(ips) - 1 
 batch_size = 32
 fusion = "FedAvg"
