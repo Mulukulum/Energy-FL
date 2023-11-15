@@ -15,9 +15,11 @@ import zmq
 STOP_POWER_COLLECTION = 300
 
 ips = {
-    "user": "10.8.1.46",
+    "user": "10.8.1.45",
     "rpi1": "10.8.1.38",
+    "rpi2": "10.8.1.43",
     "rpi3": "10.8.1.192",
+    "rpi4": "10.8.1.41"
 }
 
 ports_listening = {}
@@ -51,7 +53,7 @@ rounds = 3
 epochs = 4
 run = "0"
 
-dataset = "mnist"
+dataset = "cifar10"
 num_parties: int = 2
 batch_size = 512
 fusion = "FedAvg"
