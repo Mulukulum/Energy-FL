@@ -9,12 +9,13 @@ from tensorflow import keras as keras
 
 parser = argparse.ArgumentParser(description="Flower Embedded devices")
 
+
 def add_parser_args(p):
     p.add_argument(
         "--agg_ip",
         type=str,
         default="0.0.0.0:8080",
-        help=f"gRPC server address (deafault '0.0.0.0:8080')",
+        help=f"gRPC server address (default '0.0.0.0:8080')",
     )
     p.add_argument(
         "--cid",
@@ -31,7 +32,31 @@ def add_parser_args(p):
         "--client_ip",
         type=str,
         default="0.0.0.0:8080",
-        help=f"Client IP Address (deafault '0.0.0.0:8080')",
+        help=f"Client IP Address (default '0.0.0.0:8080')",
+    )
+    p.add_argument(
+        "--num_parties",
+        type=int,
+        default=2,
+        help=f"Number of Parties participating in FL (default 2)",
+    )
+    p.add_argument(
+        "--agg_broadcast_port",
+        type=int,
+        default=6011,
+        help=f"Aggregator ZMQ Broadcast port",
+    )
+    p.add_argument(
+        "--party_listener_port",
+        type=int,
+        default=-1,
+        help=f"Listening port of party",
+    )
+    p.add_argument(
+        "--pi_name",
+        type=str,
+        required=True,
+        help = 'Username of the RPI'
     )
 
 
@@ -136,8 +161,8 @@ class FlowerClient(fl.client.NumPyClient):
         metrics_dictionary = {
             "acc": round(accuracy, 2),
             "accuracy": accuracy,
-            'f1' : f1,
-            'precision' : precision,
+            "f1": f1,
+            "precision": precision,
         }
 
         y_pred = self.model.predict(self.x_val)
@@ -153,15 +178,15 @@ class FlowerClient(fl.client.NumPyClient):
             )
 
         return loss, len(self.x_val), metrics_dictionary
-    
+
 
 def main():
     args = parser.parse_args()
 
-    args
-
+    NUM_CLIENTS = args.num_parties
+    
     assert args.cid < NUM_CLIENTS
-
+    
     use_mnist = args.mnist
     # Download CIFAR-10 dataset and partition it
     partitions, _ = prepare_dataset(use_mnist)
