@@ -123,13 +123,14 @@ def main(args: dict = None):
     global dataset, model, fusion, sample_fraction, num_parties, batch_size, epochs, rounds, run
     min_num_clients = num_parties
     
-    
     if args is not None:
         for key, val in args.items():
             if isinstance(val, int) or isinstance(val, float):
                 exec(key + "=" + str(val))  # This is bad but its quick
+                print(key + "=" + str(val))
             elif isinstance(val, str):
                 exec(f"{key} = '{str(val)}' ")
+                print(f"{key} = '{str(val)}' ")
 
     print("\n" * 3)
 
