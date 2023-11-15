@@ -161,6 +161,7 @@ def main(args: dict = None):
         fraction_evaluate=sample_fraction,
         min_fit_clients=min_num_clients,
         on_fit_config_fn=fit_config,
+        min_available_clients=min_num_clients,
         evaluate_metrics_aggregation_fn=weighted_average,
         on_evaluate_config_fn=evaluate_config,
     )
