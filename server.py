@@ -20,15 +20,10 @@ ips = {
     "rpi1": "10.8.1.38",
     "rpi2": "10.8.1.43",
     "rpi3": "10.8.1.192",
-    "rpi4": "10.8.1.41"
+    "rpi4": "10.8.1.41",
 }
 
-ports_listening = {
-    "rpi1": 6011,
-    "rpi2": 6012,
-    "rpi3": 6013,
-    "rpi4": 6014
-}
+ports_listening = {"rpi1": 6011, "rpi2": 6012, "rpi3": 6013, "rpi4": 6014}
 
 broadcast_port = 6010
 server_port = 7011
@@ -139,7 +134,7 @@ def main(args: dict = None):
         input("Press Enter to Exit")
         sys.exit()
 
-    if run is None:
+    if run is None or run == "0":
         input(
             """
           Note : If you need SAR Timeseries data for multiple devices,
@@ -189,7 +184,7 @@ def main(args: dict = None):
         broadcast.bind(f"tcp://{aggregator_ip}:{broadcast_port}")
     except OSError as e:
         print(f"OSError Occurred, Error {e}")
-        
+
     def wait_until_ready(value, msg=None) -> None:
         nonlocal listeners
         if msg is None:
@@ -234,7 +229,7 @@ def main(args: dict = None):
                 str(dataset),
                 str(ip),
                 str(user),
-                str(ports_listening[user])
+                str(ports_listening[user]),
             ]
         )
         party_id += 1
