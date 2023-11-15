@@ -201,6 +201,7 @@ class FlowerClient(fl.client.NumPyClient):
         metrics_dictionary = {
             "acc": round(accuracy, 2),
             "accuracy": accuracy,
+            "loss": loss,
         }
         if config.get("log_final", False):
             ...
