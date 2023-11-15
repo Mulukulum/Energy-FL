@@ -124,7 +124,10 @@ def main(args: dict = None):
     """
     if args is not None:
         for key, val in args.items():
-            exec(key + "=" + str(val))  # This is bad but its quick
+            if isinstance(val, int) or isinstance(val, float):
+                exec(key + "=" + str(val))  # This is bad but its quick
+            elif isinstance(val, str):
+                exec(f"{key} = '{str(val)}' ")
 
     print("\n" * 3)
 
