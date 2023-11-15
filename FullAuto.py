@@ -23,7 +23,7 @@ for dataset in valid_datasets:
                 rounds, epochs = rounds_epochs
                 for batch_size in batch_sizes:
                     for sample_fraction in sample_fractions:
-                        for run in range(runs):
+                        for run in range(1, runs+1):
                             main(
                                 {
                                     "rounds": rounds,
