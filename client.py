@@ -148,7 +148,7 @@ class FlowerClient(fl.client.NumPyClient):
             "adam",
             "sparse_categorical_crossentropy",
             metrics=[
-                tf.keras.metrics.Accuracy(),
+                "accuracy",
                 tf.keras.metrics.F1Score(),
                 tf.keras.metrics.Precision(),
             ],
