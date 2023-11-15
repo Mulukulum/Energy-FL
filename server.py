@@ -184,7 +184,7 @@ def main(args: dict = None):
         time.sleep(5)
         return
     else:
-        fusion(
+        strategy = fusion(
             fraction_fit=sample_fraction,
             fraction_evaluate=sample_fraction,
             min_fit_clients=min_num_clients,
