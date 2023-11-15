@@ -53,7 +53,7 @@ valid_models = {"tf-cnn"}
 # Parameters
 rounds = 3
 epochs = 4
-run = "0"
+run = None
 
 dataset = "mnist"
 num_parties: int = len(ips) - 1 
@@ -128,8 +128,7 @@ def main(args: dict = None):
 
     print("\n" * 3)
 
-    if run is None or run == "0":
-        run = None
+    if run == None:
         input(
             """
           Note : If you need SAR Timeseries data for multiple devices,
