@@ -61,7 +61,7 @@ run = "0"
 
 dataset = "cifar10"
 num_parties: int = 4
-batch_size = 512
+batch_size = 32
 fusion = "FedAvg"
 model = "tf-cnn"
 sample_fraction = 1.0
