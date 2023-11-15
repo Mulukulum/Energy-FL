@@ -13,6 +13,7 @@ import zmq
 
 # Constants
 STOP_POWER_COLLECTION = 300
+WORK_DONE = 200
 
 ips = {
     "user": "10.8.1.45",
@@ -22,9 +23,14 @@ ips = {
     "rpi4": "10.8.1.41"
 }
 
-ports_listening = {}
+ports_listening = {
+    "rpi1": 6011,
+    "rpi2": 6012,
+    "rpi3": 6013,
+    "rpi4": 6014
+}
 
-broadcast_port = 6011
+broadcast_port = 6010
 server_port = 7011
 aggregator_username = "user"
 aggregator_ip = ips.get("user")
@@ -183,6 +189,32 @@ def main(args: dict = None):
         broadcast.bind(f"tcp://{aggregator_ip}:{broadcast_port}")
     except OSError as e:
         print(f"OSError Occurred, Error {e}")
+        
+    def wait_until_ready(value, msg=None) -> None:
+        nonlocal listeners
+        if msg is None:
+            msg = f"Listening for value : {value}"
+        print(msg)
+        finished = [False] * len(listeners)
+        finished_indicies = []
+        while False in finished:
+            for index, listener in enumerate(listeners):
+                if index in finished_indicies:
+                    continue
+                try:
+                    response = listener.recv_pyobj(flags=zmq.NOBLOCK)
+                except zmq.ZMQError:
+                    ...
+                else:
+                    if response == value:
+                        finished_indicies.append(index)
+                        finished[index] = True
+            print(f"Parties that have responded :", *finished_indicies, sep=" ")
+            if False not in finished:
+                time.sleep(5)
+            else:
+                time.sleep(15)
+        print("Finished Waiting")
 
     # Start Flower server
 
@@ -202,6 +234,7 @@ def main(args: dict = None):
                 str(dataset),
                 str(ip),
                 str(user),
+                str(ports_listening[user])
             ]
         )
         party_id += 1
@@ -214,6 +247,8 @@ def main(args: dict = None):
         config=fl.server.ServerConfig(num_rounds=3),
         strategy=strategy,
     )
+
+    wait_until_ready(WORK_DONE, msg="Waiting for Parties to finish FL rounds")
 
     sar.communicate(b"\n")
     broadcast.send_pyobj(STOP_POWER_COLLECTION)
