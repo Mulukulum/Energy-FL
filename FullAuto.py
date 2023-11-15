@@ -1,14 +1,14 @@
 from server import main
 import time
 
-valid_datasets = {"mnist", "cifar10"}
-valid_fusion_algos = {
+valid_datasets = ["mnist", "cifar10"]
+valid_fusion_algos = [
     "FedAvg",
     "FedProx",
     "FedAdagrad",
     "FedXgbNnAvg",
-}
-valid_models = {"tf-cnn"}
+]
+valid_models = ["tf-cnn"]
 rounds_and_epochs = [
     (3, 4),
 ]
