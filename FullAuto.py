@@ -5,7 +5,6 @@ valid_datasets = ["mnist", "cifar10"]
 valid_fusion_algos = [
     "FedAvg",
     "FedProx",
-    "FedXgbNnAvg",
 ]
 valid_models = ["tf-cnn"]
 rounds_and_epochs = [
