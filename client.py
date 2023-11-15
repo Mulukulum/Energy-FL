@@ -8,14 +8,20 @@ import tensorflow as tf
 from tensorflow import keras as keras
 
 parser = argparse.ArgumentParser(description="Flower Embedded devices")
-
+NUM_CLIENTS = -1
 
 def add_parser_args(p):
     p.add_argument(
         "--agg_ip",
         type=str,
-        default="0.0.0.0:8080",
-        help=f"gRPC server address (default '0.0.0.0:8080')",
+        default="0.0.0.0",
+        help=f"gRPC server address IP (default '0.0.0.0')",
+    )
+    p.add_argument(
+        "--agg_port",
+        type=str,
+        default="8080",
+        help=f"gRPC server address port (default '8080')",
     )
     p.add_argument(
         "--cid",
@@ -180,21 +186,21 @@ class FlowerClient(fl.client.NumPyClient):
 
 
 def main():
+    global NUM_CLIENTS
     args = parser.parse_args()
 
     NUM_CLIENTS = args.num_parties
-    
-    assert args.cid < NUM_CLIENTS
-    
-    
     use_mnist = True if args.dataset == 'mnist' else False
+    
     # Download CIFAR-10 dataset and partition it
     partitions, _ = prepare_dataset(use_mnist)
     trainset, valset = partitions[args.cid]
 
+    server_address = args.agg_ip + ":" + args.agg_port
+
     # Start Flower client setting its associated data partition
     fl.client.start_numpy_client(
-        server_address=args.aggregator_ip,
+        server_address=server_address,
         client=FlowerClient(trainset=trainset, valset=valset, use_mnist=use_mnist),
     )
 
