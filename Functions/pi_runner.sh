@@ -17,6 +17,6 @@ ssh -tt $pi_name@$current_ip << EOF
    source venv/bin/activate;
    python client.py --cid ${party_id} --dataset ${dataset} --agg_ip ${agg_ip} --agg_port ${agg_port} --num_parties ${num_parties} --client_ip ${current_ip} --pi_name ${pi_name} ;
    mv Outputs/epoch_logs.csv Outputs/$pi_name-epoch-logs.csv ; 
-   python train_done.py ${current_ip} ${listener_port}
+   python train_done.py ${current_ip} ${listener_port} ; 
    exit ;
 EOF
