@@ -60,9 +60,9 @@ batch_size = 32
 fusion = "FedAvg"
 model = "tf-cnn"
 sample_fraction = 1.0
+run = None
 
-min_num_clients = num_parties
-fusion = fusion_algos_translator[fusion]
+
 
 
 # Define metric aggregation function
@@ -119,8 +119,11 @@ def main(args: dict = None):
     model
     sample_fraction
     ```
-
     """
+    global dataset, model, fusion, sample_fraction, num_parties, batch_size, epochs, rounds, run
+    min_num_clients = num_parties
+    
+    
     if args is not None:
         for key, val in args.items():
             if isinstance(val, int) or isinstance(val, float):
@@ -128,10 +131,6 @@ def main(args: dict = None):
             elif isinstance(val, str):
                 exec(f"{key} = '{str(val)}' ")
 
-    if 'run' in args:
-        run = args['run']
-    else:
-        run = None
     print("\n" * 3)
 
     if run == None:
@@ -160,7 +159,7 @@ def main(args: dict = None):
       {model=}
       """
     )
-
+    fusion = fusion_algos_translator[fusion]
     # Define strategy
     strategy = fusion(
         fraction_fit=sample_fraction,
