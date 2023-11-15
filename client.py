@@ -149,8 +149,6 @@ class FlowerClient(fl.client.NumPyClient):
             "sparse_categorical_crossentropy",
             metrics=[
                 "accuracy",
-                tf.keras.metrics.F1Score(),
-                tf.keras.metrics.Precision(),
             ],
         )
 
@@ -195,16 +193,12 @@ class FlowerClient(fl.client.NumPyClient):
         (
             loss,
             accuracy,
-            f1,
-            precision,
         ) = self.model.evaluate(self.x_val, self.y_val)
 
         multilabel_average_options = ["micro", "macro", "weighted"]
         metrics_dictionary = {
             "acc": round(accuracy, 2),
             "accuracy": accuracy,
-            "f1": f1,
-            "precision": precision,
         }
         if config.get("log_final", False):
             ...
