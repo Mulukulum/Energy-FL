@@ -178,7 +178,7 @@ class FlowerClient(fl.client.NumPyClient):
         # Logs Epoch Times
         start_times = epoch_time_logger.start_times
         end_times = epoch_time_logger.end_times
-        with open("Outputs/epoch-logs.csv", "a", newline="") as f:
+        with open("Outputs/epoch_logs.csv", "a", newline="") as f:
             writer = csv.writer(f)
             for index, (start_time, end_time) in enumerate(zip(start_times, end_times)):
                 format = (

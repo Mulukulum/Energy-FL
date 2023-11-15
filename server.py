@@ -236,7 +236,6 @@ def main(args: dict = None):
         time.sleep(2)
 
     server_address = str(aggregator_ip) + ":" + str(server_port)
-    time.sleep(10)
 
     fl.server.start_server(
         server_address=server_address,
