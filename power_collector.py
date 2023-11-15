@@ -19,12 +19,18 @@ import threading
 import sys
 import zmq
 
+if len(sys.argv) == 3 :
+    _, interval, agg_ip_port = sys.argv
+elif len(sys.argv) == 2 :
+    _, interval = sys.argv
+    agg_ip_port = '10.8.1.45:6010'
+
 STOP_POWER_COLLECTION = 300
 UM25C_ADDRESS = "98:DA:F0:00:4A:13"
 STOP_COLLECTING = False
 CONTEXT = zmq.Context()
 SOCKET = CONTEXT.socket(zmq.SUB)
-SOCKET.connect("tcp://10.8.1.46:6011")
+SOCKET.connect(f"tcp://{agg_ip_port}")
 SOCKET.setsockopt(zmq.SUBSCRIBE, b'')
 
 def connect_to_usb_tester(bt_addr):

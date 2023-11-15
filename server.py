@@ -237,7 +237,7 @@ def main(args: dict = None):
     # Start Flower server
 
     sar = subprocess.Popen(["./Functions/sar_collector.sh"], stdin=subprocess.PIPE)
-    power = subprocess.Popen(["./Functions/power_collector.sh", "0.5"])
+    power = subprocess.Popen(["./Functions/power_collector.sh", "0.5", f"{aggregator_ip}:{broadcast_port}"])
     party_id = 0
     for user, ip in ips.items():
         if user == aggregator_username:
