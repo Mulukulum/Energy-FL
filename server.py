@@ -129,7 +129,7 @@ def main(args: dict = None):
                 exec(f"{key} = '{str(val)}' ")
 
     if 'run' in args:
-        ...
+        run = args[run]
     else:
         run = None
     print("\n" * 3)
