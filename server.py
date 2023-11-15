@@ -178,7 +178,11 @@ def main(args: dict = None):
         proximal_mu = proximal_mu,
     )
     elif fusion == fusion_algos_translator['FedAdagrad']:
-        ...
+        print('\n'*3)
+        print("Currently this fusion algo is unsupported")
+        print('\n'*3)
+        time.sleep(5)
+        return
     else:
         fusion(
             fraction_fit=sample_fraction,
