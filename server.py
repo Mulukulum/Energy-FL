@@ -61,7 +61,7 @@ fusion = "FedAvg"
 model = "tf-cnn"
 sample_fraction = 1.0
 run = None
-
+proximal_mu = 1
 
 
 
@@ -118,9 +118,10 @@ def main(args: dict = None):
     fusion
     model
     sample_fraction
+    proximal_mu
     ```
     """
-    global dataset, model, fusion, sample_fraction, num_parties, batch_size, epochs, rounds, run
+    global dataset, model, fusion, sample_fraction, num_parties, batch_size, epochs, rounds, run, proximal_mu
     min_num_clients = num_parties
     
     if args is not None:
@@ -132,6 +133,7 @@ def main(args: dict = None):
         fusion = args['fusion']
         model = args['model']
         sample_fraction = args['sample_fraction']        
+        proximal_mu = args.get('proximal_mu', 1)
         
     print("\n" * 3)
 
@@ -163,7 +165,9 @@ def main(args: dict = None):
     )
     fusion = fusion_algos_translator[fusion]
     # Define strategy
-    strategy = fusion(
+    
+    if fusion == fusion_algos_translator['FedProx']:
+        strategy = fusion(
         fraction_fit=sample_fraction,
         fraction_evaluate=sample_fraction,
         min_fit_clients=min_num_clients,
@@ -171,7 +175,20 @@ def main(args: dict = None):
         min_available_clients=min_num_clients,
         evaluate_metrics_aggregation_fn=weighted_average,
         on_evaluate_config_fn=evaluate_config,
+        proximal_mu = proximal_mu,
     )
+    elif fusion == fusion_algos_translator['FedAdagrad']:
+        ...
+    else:
+        fusion(
+            fraction_fit=sample_fraction,
+            fraction_evaluate=sample_fraction,
+            min_fit_clients=min_num_clients,
+            on_fit_config_fn=fit_config,
+            min_available_clients=min_num_clients,
+            evaluate_metrics_aggregation_fn=weighted_average,
+            on_evaluate_config_fn=evaluate_config,
+        ) 
 
     agg_context = zmq.Context()
     listeners = []
