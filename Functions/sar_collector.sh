@@ -5,9 +5,9 @@ echo "user123" | sudo -S pwd
 color='\033[1;31m' # set the color to bold red
 
 # Define the list of hosts to run the SAR command on
-hosts=("10.8.1.46" "10.8.1.38" "10.8.1.192")
+hosts=("10.8.1.45" "10.8.1.38" "10.8.1.43" "10.8.1.192" "10.8.1.41")
 # Define the usernames for each host
-usernames=("user" "rpi1" "rpi3")
+usernames=("user" "rpi1" "rpi2" "rpi3" "rpi4")
 
 # Define the remote command to run SAR and collect data
 remote_cmd=$(cat << 'END_CMD'
