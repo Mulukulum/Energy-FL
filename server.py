@@ -54,7 +54,7 @@ epochs = 4
 run = "0"
 
 dataset = "cifar10"
-num_parties: int = 2
+num_parties: int = 4
 batch_size = 512
 fusion = "FedAvg"
 model = "tf-cnn"
