@@ -46,6 +46,7 @@ fusion_algos_translator = {
     "FedXgbNnAvg": fl.server.strategy.FedXgbNnAvg,
 }
 
+fusion_string_translator = {fusion_algos_translator[d] : d for d in fusion_algos_translator}
 
 valid_models = {"tf-cnn"}
 
@@ -259,9 +260,9 @@ def main(args: dict = None):
             subprocess.run(f"./Functions/files_copier.sh {user} {ip}", shell=True)
 
     if run is None:
-        fname = f"{fusion}_{model}_{batch_size}_{num_parties}_{dataset}"
+        fname = f"{fusion_string_translator[fusion]}_{model}_{batch_size}_{num_parties}_{dataset}"
     else:
-        fname = f"{fusion}_{model}_{batch_size}_{num_parties}_{dataset}_{run}"
+        fname = f"{fusion_string_translator[fusion]}_{model}_{batch_size}_{num_parties}_{dataset}_{run}"
 
     from Functions import Parser
 
