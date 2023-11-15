@@ -55,7 +55,7 @@ epochs = 4
 run = "0"
 
 dataset = "cifar10"
-num_parties: int = 4
+num_parties: int = len(ips) - 1 
 batch_size = 32
 fusion = "FedAvg"
 model = "tf-cnn"
@@ -127,12 +127,6 @@ def main(args: dict = None):
             exec(key + "=" + str(val))  # This is bad but its quick
 
     print("\n" * 3)
-
-    if num_parties != len(ips) - 1:
-        print("""WARNING! Number of parties and number of provided IPs do not match.""")
-        print("""Change the dictionary of IPs in this python script rfn""")
-        input("Press Enter to Exit")
-        sys.exit()
 
     if run is None or run == "0":
         input(
@@ -233,7 +227,6 @@ def main(args: dict = None):
             ]
         )
         party_id += 1
-        time.sleep(2)
 
     server_address = str(aggregator_ip) + ":" + str(server_port)
 
