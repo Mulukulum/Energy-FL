@@ -53,7 +53,6 @@ valid_models = {"tf-cnn"}
 # Parameters
 rounds = 3
 epochs = 4
-run = None
 
 dataset = "mnist"
 num_parties: int = len(ips) - 1 
@@ -129,6 +128,10 @@ def main(args: dict = None):
             elif isinstance(val, str):
                 exec(f"{key} = '{str(val)}' ")
 
+    if 'run' in args:
+        ...
+    else:
+        run = None
     print("\n" * 3)
 
     if run == None:
