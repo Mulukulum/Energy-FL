@@ -59,7 +59,6 @@ def add_parser_args(p):
         help = 'Username of the RPI'
     )
 
-
 add_parser_args(parser)
 
 warnings.filterwarnings("ignore", category=UserWarning)
@@ -187,14 +186,15 @@ def main():
     
     assert args.cid < NUM_CLIENTS
     
-    use_mnist = args.mnist
+    
+    use_mnist = True if args.dataset == 'mnist' else False
     # Download CIFAR-10 dataset and partition it
     partitions, _ = prepare_dataset(use_mnist)
     trainset, valset = partitions[args.cid]
 
     # Start Flower client setting its associated data partition
     fl.client.start_numpy_client(
-        server_address=args.server_address,
+        server_address=args.aggregator_ip,
         client=FlowerClient(trainset=trainset, valset=valset, use_mnist=use_mnist),
     )
 
@@ -205,7 +205,6 @@ if __name__ == "__main__":
     main()
 
 """
-
 from sklearn.metrics import f1_score, precision_score, recall_score, confusion_matrix
 y_pred1 = model.predict(X_test)
 y_pred = np.argmax(y_pred1, axis=1)
@@ -214,21 +213,4 @@ y_pred = np.argmax(y_pred1, axis=1)
 print(precision_score(y_test, y_pred , average="macro"))
 print(recall_score(y_test, y_pred , average="macro"))
 print(f1_score(y_test, y_pred , average="macro"))
-
-
-metrics = {}
-    round_digits = 2
-    multilabel_average_options = ["micro", "macro", "weighted"]
-
-    for avg in multilabel_average_options:
-        try:
-            metrics["f1 " + avg] = round(f1_score(y_true, y_pred, average=avg, zero_division=0), round_digits)
-            metrics["precision " + avg] = round(
-                precision_score(y_true, y_pred, average=avg, zero_division=0), round_digits
-            )
-            metrics["recall " + avg] = round(recall_score(y_true, y_pred, average=avg, zero_division=0), round_digits)
-        except Exception as ex:
-            logger.exception(ex)
-
-    return metrics
 """

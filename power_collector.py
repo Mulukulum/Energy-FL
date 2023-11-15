@@ -16,8 +16,10 @@ import bluetooth
 import struct
 import time
 import threading
+import sys
 import zmq
 
+STOP_POWER_COLLECTION = 300
 UM25C_ADDRESS = "98:DA:F0:00:4A:13"
 STOP_COLLECTING = False
 CONTEXT = zmq.Context()
@@ -88,11 +90,24 @@ def collect(
                 time.sleep(interval)
     sock.close()
 
+def wait_until_ready(value, SOCKET, msg=None,) -> None:
+        if msg is None:
+            msg = f"Listening for value : {value}"
+        print(msg)
+        finished = False
+        while finished is False:
+                try:
+                    response = SOCKET.recv_pyobj(flags=zmq.NOBLOCK)
+                except zmq.ZMQError:
+                    ...
+                else:
+                    if response == value:
+                        finished = True
+                        return
+                    else:
+                        time.sleep(3)
 
 if __name__ == "__main__":
-    import sys
-
-    time.sleep(1)
     try:
         interval = float(sys.argv[1])
     except Exception:
@@ -100,7 +115,7 @@ if __name__ == "__main__":
         interval = 1
     process = threading.Thread(target=collect, args=[interval],)
     process.start()
-    SOCKET.recv_pyobj()
+    wait_until_ready(STOP_POWER_COLLECTION, SOCKET)
     STOP_COLLECTING = True
     print("\nSTOPPING COLLECTION OF POWER DATA\n")
     process.join()
