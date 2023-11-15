@@ -2,6 +2,7 @@ import math
 import argparse
 import warnings
 
+from sklearn.metrics import f1_score, precision_score, recall_score
 import flwr as fl
 import tensorflow as tf
 from tensorflow import keras as keras
@@ -26,15 +27,23 @@ def add_parser_args(p):
         type=str,
         help="Choose a dataset from the list of valid datasets",
     )
-    
+    p.add_argument(
+        "--client_ip",
+        type=str,
+        default="0.0.0.0:8080",
+        help=f"Client IP Address (deafault '0.0.0.0:8080')",
+    )
+
+
 add_parser_args(parser)
 
 warnings.filterwarnings("ignore", category=UserWarning)
 
+
 def prepare_dataset(use_mnist: bool):
     """Download and partitions the CIFAR-10/MNIST dataset."""
     global NUM_CLIENTS
-    
+
     if use_mnist:
         (x_train, y_train), testset = tf.keras.datasets.mnist.load_data()
     else:
@@ -72,7 +81,7 @@ class FlowerClient(fl.client.NumPyClient):
         # Instantiate model
         if use_mnist:
             # small model for MNIST
-            self.model = model = keras.Sequential(
+            self.model = keras.Sequential(
                 [
                     keras.Input(shape=(28, 28, 1)),
                     keras.layers.Conv2D(32, kernel_size=(5, 5), activation="relu"),
@@ -90,7 +99,13 @@ class FlowerClient(fl.client.NumPyClient):
                 (32, 32, 3), classes=10, weights=None
             )
         self.model.compile(
-            "adam", "sparse_categorical_crossentropy", metrics=["accuracy"]
+            "adam",
+            "sparse_categorical_crossentropy",
+            metrics=[
+                tf.keras.metrics.Accuracy(),
+                tf.keras.metrics.F1Score(),
+                tf.keras.metrics.Precision(),
+            ],
         )
 
     def get_parameters(self, config):
@@ -109,15 +124,40 @@ class FlowerClient(fl.client.NumPyClient):
         return self.get_parameters({}), len(self.x_train), {}
 
     def evaluate(self, parameters, config):
-        print("Client sampled for evaluate()")
         self.set_parameters(parameters)
-        loss, accuracy = self.model.evaluate(self.x_val, self.y_val)
-        return loss, len(self.x_val), {"accuracy": accuracy}
+        (
+            loss,
+            accuracy,
+            f1,
+            precision,
+        ) = self.model.evaluate(self.x_val, self.y_val)
 
+        multilabel_average_options = ["micro", "macro", "weighted"]
+        metrics_dictionary = {
+            "acc": round(accuracy, 2),
+            "accuracy": accuracy,
+            'f1' : f1,
+            'precision' : precision,
+        }
+
+        y_pred = self.model.predict(self.x_val)
+        for avg in multilabel_average_options:
+            metrics_dictionary["f1 " + avg] = round(
+                f1_score(self.y_val, y_pred, average=avg, zero_division=0), 3
+            )
+            metrics_dictionary["precision " + avg] = round(
+                precision_score(self.y_val, y_pred, average=avg, zero_division=0), 3
+            )
+            metrics_dictionary["recall " + avg] = round(
+                recall_score(self.y_val, y_pred, average=avg, zero_division=0), 3
+            )
+
+        return loss, len(self.x_val), metrics_dictionary
+    
 
 def main():
     args = parser.parse_args()
-    
+
     args
 
     assert args.cid < NUM_CLIENTS
@@ -132,10 +172,38 @@ def main():
         server_address=args.server_address,
         client=FlowerClient(trainset=trainset, valset=valset, use_mnist=use_mnist),
     )
-    
-    
+
     # Evaluate the results and store them into disk now
 
 
 if __name__ == "__main__":
     main()
+
+"""
+
+from sklearn.metrics import f1_score, precision_score, recall_score, confusion_matrix
+y_pred1 = model.predict(X_test)
+y_pred = np.argmax(y_pred1, axis=1)
+
+# Print f1, precision, and recall scores
+print(precision_score(y_test, y_pred , average="macro"))
+print(recall_score(y_test, y_pred , average="macro"))
+print(f1_score(y_test, y_pred , average="macro"))
+
+
+metrics = {}
+    round_digits = 2
+    multilabel_average_options = ["micro", "macro", "weighted"]
+
+    for avg in multilabel_average_options:
+        try:
+            metrics["f1 " + avg] = round(f1_score(y_true, y_pred, average=avg, zero_division=0), round_digits)
+            metrics["precision " + avg] = round(
+                precision_score(y_true, y_pred, average=avg, zero_division=0), round_digits
+            )
+            metrics["recall " + avg] = round(recall_score(y_true, y_pred, average=avg, zero_division=0), round_digits)
+        except Exception as ex:
+            logger.exception(ex)
+
+    return metrics
+"""
