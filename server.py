@@ -20,12 +20,10 @@ ips = {
     "rpi3": "10.8.1.192",
 }
 
-ports_listening = {
-    "rpi1": 6012,
-    "rpi3": 6013,
-}
+ports_listening = {}
 
 broadcast_port = 6011
+server_port = 7011
 aggregator_username = "user"
 aggregator_ip = ips.get("user")
 
@@ -90,10 +88,24 @@ def fit_config(
     return config
 
 
+def evaluate_config(server_round: int):
+    global rounds
+    if server_round == -1:
+        log_final = True
+        synced = "-synced"
+    elif rounds == server_round:
+        log_final = True
+        synced = ""
+    else:
+        log_final = False
+        synced = ""
+    return {"log_final": log_final, "synced": synced}
+
+
 def main(args: dict = None):
-    '''
-    Pass args as a dictionary with the keys : 
-    
+    """
+    Pass args as a dictionary with the keys :
+
     ```
     rounds
     epochs
@@ -103,12 +115,13 @@ def main(args: dict = None):
     fusion
     model
     sample_fraction
+    server_port
     ```
-    
-    '''
+
+    """
     if args is not None:
-        for key,val in args.items():
-            exec(key + "=" + str(val) ) # This is bad but its quick
+        for key, val in args.items():
+            exec(key + "=" + str(val))  # This is bad but its quick
 
     print("\n" * 3)
 
@@ -152,6 +165,7 @@ def main(args: dict = None):
         min_fit_clients=min_num_clients,
         on_fit_config_fn=fit_config,
         evaluate_metrics_aggregation_fn=weighted_average,
+        on_evaluate_config_fn=evaluate_config,
     )
 
     agg_context = zmq.Context()
@@ -168,36 +182,6 @@ def main(args: dict = None):
     except OSError as e:
         print(f"OSError Occurred, Error {e}")
 
-    
-        
-
-    # We listen for the the parties to confirm they actually did stuff
-    def wait_until_ready(value, msg=None) -> None:
-        nonlocal listeners
-        if msg is None:
-            msg = f"Listening for value : {value}"
-        print(msg)
-        finished = [False] * len(listeners)
-        finished_indicies = []
-        while False in finished:
-            for index, listener in enumerate(listeners):
-                if index in finished_indicies:
-                    continue
-                try:
-                    response = listener.recv_pyobj(flags=zmq.NOBLOCK)
-                except zmq.ZMQError:
-                    ...
-                else:
-                    if response == value:
-                        finished_indicies.append(index)
-                        finished[index] = True
-            print(f"Parties that have responded :", *finished_indicies, sep=" ")
-            if False not in finished:
-                time.sleep(5)
-            else:
-                time.sleep(15)
-        print("Finished Waiting")
-
     # Start Flower server
 
     sar = subprocess.Popen(["./Functions/sar_collector.sh"], stdin=subprocess.PIPE)
@@ -209,24 +193,22 @@ def main(args: dict = None):
         subp = subprocess.Popen(
             [
                 "./Functions/pi_runner.sh",
-                fusion,
-                model,
-                str(num_parties),
-                dataset,
-                aggregator_ip,
-                ip,
-                str(broadcast_port),
-                str(ports_listening.get(user)),
-                user,
                 str(party_id),
-                str(batch_size),
+                str(aggregator_ip),
+                str(server_port),
+                str(num_parties),
+                str(dataset),
+                str(ip),
+                str(user),
             ]
         )
         party_id += 1
         time.sleep(2)
 
+    server_address = str(aggregator_ip) + ":" + str(server_port)
+
     fl.server.start_server(
-        server_address=args.server_address,
+        server_address=server_address,
         config=fl.server.ServerConfig(num_rounds=3),
         strategy=strategy,
     )
@@ -235,10 +217,8 @@ def main(args: dict = None):
     broadcast.send_pyobj(STOP_POWER_COLLECTION)
     sar.wait()
     power.wait()
-    
+
     # FL Training is Done, now for the evaluations
-    
-    
 
     for listener in listeners:
         try:

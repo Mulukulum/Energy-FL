@@ -1,14 +1,29 @@
 import math
 import argparse
 import warnings
+import datetime
+import csv
 
 from sklearn.metrics import f1_score, precision_score, recall_score
 import flwr as fl
 import tensorflow as tf
-from tensorflow import keras as keras
+from tensorflow.keras.callbacks import Callback
+from tensorflow import keras
+
+#! Used for typehints only, remove when done
+from keras.callbacks import Callback
+import keras
+
+#! Used for typehints only, remove when done
+
 
 parser = argparse.ArgumentParser(description="Flower Embedded devices")
 NUM_CLIENTS = -1
+PI_NAME = ""
+
+with open("Outputs/epoch_logs.csv", "w") as f:
+    ...
+
 
 def add_parser_args(p):
     p.add_argument(
@@ -32,13 +47,14 @@ def add_parser_args(p):
     p.add_argument(
         "--dataset",
         type=str,
+        required=True,
         help="Choose a dataset from the list of valid datasets",
     )
     p.add_argument(
         "--client_ip",
         type=str,
-        default="0.0.0.0:8080",
-        help=f"Client IP Address (default '0.0.0.0:8080')",
+        default="0.0.0.0",
+        help=f"Client IP Address (default '0.0.0.0')",
     )
     p.add_argument(
         "--num_parties",
@@ -47,25 +63,18 @@ def add_parser_args(p):
         help=f"Number of Parties participating in FL (default 2)",
     )
     p.add_argument(
-        "--agg_broadcast_port",
-        type=int,
-        default=6011,
-        help=f"Aggregator ZMQ Broadcast port",
-    )
-    p.add_argument(
-        "--party_listener_port",
-        type=int,
-        default=-1,
-        help=f"Listening port of party",
-    )
-    p.add_argument(
         "--pi_name",
         type=str,
         required=True,
-        help = 'Username of the RPI'
+        help=f"Name of the RPI",
     )
 
+
 add_parser_args(parser)
+
+args = parser.parse_args()
+NUM_CLIENTS = args.num_parties
+PI_NAME = args.pi_name
 
 warnings.filterwarnings("ignore", category=UserWarning)
 
@@ -100,6 +109,20 @@ def prepare_dataset(use_mnist: bool):
 
     return partitions, testset
 
+class TimeHistory(Callback):
+    def on_train_begin(self, logs={}):
+        self.start_times = []
+        self.end_times = []
+        # self.times = []
+
+    def on_epoch_begin(self, batch, logs={}):
+        self.epoch_time_start = datetime.datetime.now()
+        self.start_times.append(self.epoch_time_start)
+
+    def on_epoch_end(self, batch, logs={}):
+        self.epoch_time_end = datetime.datetime.now()
+        self.end_times.append(self.epoch_time_end)
+        # self.times.append(self.epoch_time_end - self.epoch_time_start)
 
 class FlowerClient(fl.client.NumPyClient):
     """A FlowerClient that uses MobileNetV3 for CIFAR-10 or a much smaller CNN for
@@ -150,10 +173,31 @@ class FlowerClient(fl.client.NumPyClient):
         # Set hyperparameters from config sent by server/strategy
         batch, epochs = config["batch_size"], config["epochs"]
         # train
-        self.model.fit(self.x_train, self.y_train, epochs=epochs, batch_size=batch)
+        epoch_time_logger = TimeHistory()
+        self.model.fit(
+            self.x_train,
+            self.y_train,
+            epochs=epochs,
+            batch_size=batch,
+            callbacks=[epoch_time_logger],
+        )
+
+        # Logs Epoch Times
+        start_times = epoch_time_logger.start_times
+        end_times = epoch_time_logger.end_times
+        with open("Outputs/epoch-logs.csv", "a", newline="") as f:
+            writer = csv.writer(f)
+            for index, (start_time, end_time) in enumerate(zip(start_times, end_times)):
+                format = (
+                    index + 1,
+                    start_time.strftime(r"%H:%M:%S"),
+                    end_time.strftime(r"%H:%M:%S"),
+                )
+                writer.writerow(format)
         return self.get_parameters({}), len(self.x_train), {}
 
     def evaluate(self, parameters, config):
+        global PI_NAME
         self.set_parameters(parameters)
         (
             loss,
@@ -169,6 +213,10 @@ class FlowerClient(fl.client.NumPyClient):
             "f1": f1,
             "precision": precision,
         }
+        if config.get("log_final", False):
+            ...
+        else:
+            return loss, len(self.x_val), metrics_dictionary
 
         y_pred = self.model.predict(self.x_val)
         for avg in multilabel_average_options:
@@ -182,16 +230,17 @@ class FlowerClient(fl.client.NumPyClient):
                 recall_score(self.y_val, y_pred, average=avg, zero_division=0), 3
             )
 
+        with open(
+            f'Outputs/Evaluations/{PI_NAME}{config.get("synced", "")}.txt', "w"
+        ) as f:
+            f.write(str(metrics_dictionary))
+
         return loss, len(self.x_val), metrics_dictionary
 
 
 def main():
-    global NUM_CLIENTS
-    args = parser.parse_args()
+    use_mnist = True if args.dataset == "mnist" else False
 
-    NUM_CLIENTS = args.num_parties
-    use_mnist = True if args.dataset == 'mnist' else False
-    
     # Download CIFAR-10 dataset and partition it
     partitions, _ = prepare_dataset(use_mnist)
     trainset, valset = partitions[args.cid]
@@ -219,4 +268,29 @@ y_pred = np.argmax(y_pred1, axis=1)
 print(precision_score(y_test, y_pred , average="macro"))
 print(recall_score(y_test, y_pred , average="macro"))
 print(f1_score(y_test, y_pred , average="macro"))
+
+
+with open('Outputs/epoch_logs.csv','r') as f, open('Outputs/temp.csv','w',newline='') as g:
+    rdr = csv.reader(f)
+    wtr = csv.writer(g)
+    round_count = 1
+    previous_epoch = 0
+    
+    for row in rdr:
+        epoch, timestamp = row
+        epoch = int(epoch)
+        if epoch > previous_epoch:
+            previous_epoch = epoch
+        else:
+            round_count+=1
+            previous_epoch = epoch
+        wtr.writerow((
+            round_count,
+            epoch,
+            timestamp,
+        ))
+
+os.remove(r'Outputs/epoch_logs.csv')
+os.rename(r'Outputs/temp.csv', r'Outputs/epoch_logs.csv')
+
 """

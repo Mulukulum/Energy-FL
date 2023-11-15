@@ -1,3 +1,4 @@
 pyzmq
 flwr
 scikit-learn
+tensorflow

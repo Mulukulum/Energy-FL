@@ -2,21 +2,19 @@
 
 #Initialize all the args
 
-num_parties=$1
-dataset=$2
-agg_ip=$3
-current_ip=$4
-agg_broadcast_port=$5
-party_listener_port=$6
+party_id=$1
+agg_ip=$2
+agg_port=$3
+num_parties=$4
+dataset=$5
+current_ip=$6
 pi_name=$7
-party_id=$8
 
 #ssh into the pi
 ssh -tt $pi_name@$current_ip << EOF
    cd ~/Desktop/Energy-FL;
    source venv/bin/activate;
-   scp -r -P222 user@${agg_ip}:~/Desktop/Energy-FL/examples/data/mnist/random/data_party_${party_id}.npz ./examples/data/mnist/random/data_party_${party_id}.npz ;
-   python client.py ${num_parties} ${dataset} ${agg_ip} ${current_ip} ${agg_broadcast_port} ${party_listener_port} ${party_id} ${datapoints_per_party} ;
+   python client.py --cid ${party_id} --dataset ${dataset} --agg_ip ${agg_ip} --agg_port ${agg_port} --num_parties ${num_parties} --client_ip ${current_ip} --pi_name ${pi_name} ;
    mv Outputs/epoch_logs.csv Outputs/$pi_name-epoch-logs.csv
    exit ;
 EOF
