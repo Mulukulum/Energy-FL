@@ -133,6 +133,7 @@ def main(args: dict = None):
                 print(f"{key} = '{str(val)}' ")
 
     print("\n" * 3)
+    print(f'{run=}')
 
     if run == None:
         input(
