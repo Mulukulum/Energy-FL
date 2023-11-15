@@ -269,6 +269,7 @@ def main(args: dict = None):
 
     sar.communicate(b"\n")
     broadcast.send_pyobj(STOP_POWER_COLLECTION)
+    print("POWER STOP SIGNAL SENT")
     sar.wait()
     power.wait()
 
