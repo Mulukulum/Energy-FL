@@ -119,7 +119,6 @@ def main(args: dict = None):
     fusion
     model
     sample_fraction
-    server_port
     ```
 
     """
@@ -130,6 +129,7 @@ def main(args: dict = None):
     print("\n" * 3)
 
     if run is None or run == "0":
+        run = None
         input(
             """
           Note : If you need SAR Timeseries data for multiple devices,
@@ -260,9 +260,9 @@ def main(args: dict = None):
             subprocess.run(f"./Functions/files_copier.sh {user} {ip}", shell=True)
 
     if run is None:
-        fname = f"{fusion_string_translator[fusion]}_{model}_{batch_size}_{num_parties}_{dataset}"
+        fname = f"{dataset}_{model}_{fusion_string_translator[fusion]}_{rounds}_{epochs}_{batch_size}_{sample_fraction}"
     else:
-        fname = f"{fusion_string_translator[fusion]}_{model}_{batch_size}_{num_parties}_{dataset}_{run}"
+        fname = f"{dataset}_{model}_{fusion_string_translator[fusion]}_{rounds}_{epochs}_{batch_size}_{sample_fraction}_{run}"
 
     from Functions import Parser
 
