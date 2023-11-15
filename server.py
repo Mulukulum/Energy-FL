@@ -124,14 +124,15 @@ def main(args: dict = None):
     min_num_clients = num_parties
     
     if args is not None:
-        for key, val in args.items():
-            if isinstance(val, int) or isinstance(val, float):
-                exec(key + "=" + str(val))  # This is bad but its quick
-                print(key + "=" + str(val))
-            elif isinstance(val, str):
-                exec(f"{key} = '{str(val)}' ")
-                print(f"{key} = '{str(val)}' ")
-
+        rounds = args['rounds']
+        epochs = args['epochs']
+        run = args['run']
+        dataset = args['dataset']
+        batch_size = args['batch_size']
+        fusion = args['fusion']
+        model = args['model']
+        sample_fraction = args['sample_fraction']        
+        
     print("\n" * 3)
     print(f'{run=}')
     print(dataset, model, fusion, sample_fraction, num_parties, batch_size, epochs, rounds, run)
