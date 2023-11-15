@@ -11,12 +11,6 @@ import tensorflow as tf
 from tensorflow.keras.callbacks import Callback
 from tensorflow import keras
 
-#! Used for typehints only, remove when done
-from keras.callbacks import Callback
-import keras
-#! Used for typehints only, remove when done
-
-
 parser = argparse.ArgumentParser(description="Flower Embedded devices")
 NUM_CLIENTS = -1
 PI_NAME = ""
