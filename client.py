@@ -5,6 +5,8 @@ import datetime
 import csv
 import os
 
+
+import numpy as np
 from sklearn.metrics import f1_score, precision_score, recall_score
 import flwr as fl
 import tensorflow as tf
@@ -205,7 +207,8 @@ class FlowerClient(fl.client.NumPyClient):
         else:
             return loss, len(self.x_val), metrics_dictionary
 
-        y_pred = self.model.predict(self.x_val)
+        y_pred1 = self.model.predict(self.x_val)
+        y_pred = np.argmax(y_pred1, axis=1)
         for avg in multilabel_average_options:
             metrics_dictionary["f1 " + avg] = round(
                 f1_score(self.y_val, y_pred, average=avg, zero_division=0), 3
