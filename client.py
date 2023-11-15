@@ -24,7 +24,6 @@ PI_NAME = ""
 with open("Outputs/epoch_logs.csv", "w") as f:
     ...
 
-
 def add_parser_args(p):
     p.add_argument(
         "--agg_ip",
@@ -253,7 +252,7 @@ def main():
         client=FlowerClient(trainset=trainset, valset=valset, use_mnist=use_mnist),
     )
 
-    # Epoch Logs made prettiers
+    # Epoch Logs made prettier
     with open('Outputs/epoch_logs.csv','r') as f, open('Outputs/temp.csv','w',newline='') as g:
         rdr = csv.reader(f)
         wtr = csv.writer(g)
