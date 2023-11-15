@@ -237,7 +237,7 @@ def main(args: dict = None):
         strategy=strategy,
     )
 
-    wait_until_ready(WORK_DONE, msg="Waiting for Parties to finish FL rounds")
+    #wait_until_ready(WORK_DONE, msg="Waiting for Parties to finish FL rounds")
 
     sar.communicate(b"\n")
     broadcast.send_pyobj(STOP_POWER_COLLECTION)
