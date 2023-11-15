@@ -3,6 +3,7 @@ import argparse
 import warnings
 import datetime
 import csv
+import os
 
 from sklearn.metrics import f1_score, precision_score, recall_score
 import flwr as fl
@@ -13,7 +14,6 @@ from tensorflow import keras
 #! Used for typehints only, remove when done
 from keras.callbacks import Callback
 import keras
-
 #! Used for typehints only, remove when done
 
 
@@ -253,8 +253,31 @@ def main():
         client=FlowerClient(trainset=trainset, valset=valset, use_mnist=use_mnist),
     )
 
-    # Evaluate the results and store them into disk now
+    # Epoch Logs made prettiers
+    with open('Outputs/epoch_logs.csv','r') as f, open('Outputs/temp.csv','w',newline='') as g:
+        rdr = csv.reader(f)
+        wtr = csv.writer(g)
+        round_count = 1
+        previous_epoch = 0
 
+        for row in rdr:
+            epoch, start, end = row
+            epoch = int(epoch)
+            if epoch > previous_epoch:
+                previous_epoch = epoch
+            else:
+                round_count+=1
+                previous_epoch = epoch
+            wtr.writerow((
+                round_count,
+                epoch,
+                start,
+                end
+            ))
+    os.remove(r'Outputs/epoch_logs.csv')
+    os.rename(r'Outputs/temp.csv', r'Outputs/epoch_logs.csv')
+    
+    #Server will now copy and interpret the results
 
 if __name__ == "__main__":
     main()
@@ -268,29 +291,4 @@ y_pred = np.argmax(y_pred1, axis=1)
 print(precision_score(y_test, y_pred , average="macro"))
 print(recall_score(y_test, y_pred , average="macro"))
 print(f1_score(y_test, y_pred , average="macro"))
-
-
-with open('Outputs/epoch_logs.csv','r') as f, open('Outputs/temp.csv','w',newline='') as g:
-    rdr = csv.reader(f)
-    wtr = csv.writer(g)
-    round_count = 1
-    previous_epoch = 0
-    
-    for row in rdr:
-        epoch, timestamp = row
-        epoch = int(epoch)
-        if epoch > previous_epoch:
-            previous_epoch = epoch
-        else:
-            round_count+=1
-            previous_epoch = epoch
-        wtr.writerow((
-            round_count,
-            epoch,
-            timestamp,
-        ))
-
-os.remove(r'Outputs/epoch_logs.csv')
-os.rename(r'Outputs/temp.csv', r'Outputs/epoch_logs.csv')
-
 """
