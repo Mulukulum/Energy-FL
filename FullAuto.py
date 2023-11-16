@@ -34,3 +34,4 @@ for dataset in valid_datasets:
                                     "sample_fraction": sample_fraction,
                                 }
                             )
+                            time.sleep(3)
