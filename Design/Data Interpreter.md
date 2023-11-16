@@ -1,3 +1,5 @@
 # Interpretation
 
-There needs to be code to generate graphs from the raw data
+There needs to be code to generate graphs and stuff from parsed data.
+
+Various metrics have to be interpreted
