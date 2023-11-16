@@ -7,3 +7,4 @@ A log must be maintained of :
     - Events that have been abruptly haulted.
     - Events that have partially failed while running.
 
+This way, one can have a look at what exactly is running on the machine remotely
