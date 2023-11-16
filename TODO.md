@@ -6,4 +6,3 @@
 - [Flower Logging](https://flower.dev/docs/framework/how-to-configure-logging.html) should probably be setup so clients can be identifed
 
 - Having classes for each client to control stuff like copying and parsing logged metrics etc.
-- Bash scripts lose execution permissions everytime we change them.
