@@ -22,3 +22,23 @@ valid_rounds_and_epochs = [
 # Initializing params that are not required for every experiment
 
 valid_proximal_mu : list[float] = [1.0]
+
+class Experiment():
+
+    fusion_translator = {
+        'FedAvg' : fl.server.strategy.FedAvg,
+        'FedProx' : fl.server.strategy.FedProx,
+    }
+    
+    def __init__(self, model : str, fusion : str, dataset : str, batch_size: int, sample_fraction : float, proximal_mu : float, rounds : int, epochs : int) -> None:
+        self.model = model
+        self.fusion = fusion
+        self.dataset = dataset
+        self.batch_size = batch_size
+        self.sample_fraction = sample_fraction
+        self.proximal_mu = proximal_mu
+        self.rounds = rounds
+        self.epochs = epochs
+        
+
+
