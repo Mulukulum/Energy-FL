@@ -152,7 +152,6 @@ class Server:
         elapsed = end_time - start_time
         log(INFO, "FL finished in %s", elapsed)
         log(INFO, "Starting Post Sync Evaluations")
-        res_fed = self.evaluate_round(server_round=-1, timeout=timeout)
         return history
 
     def evaluate_round(
