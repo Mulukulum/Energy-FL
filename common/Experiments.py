@@ -10,6 +10,7 @@ valid_fusions = []
 valid_models = []
 valid_datasets = []
 valid_batch_sizes : list[int] = [16, 512]
+valid_sample_fractions : list[float] = [1.0]
 
 valid_rounds : list[int] = [3]
 valid_epochs : list[int] = [4]
@@ -18,11 +19,6 @@ valid_rounds_and_epochs = [
     (3,4)
 ]
 
-valid_sample_fractions : list[float] = [1.0]
-
-# Initializing params that don't run on every experiment
-
+# Initializing params that are not required for every experiment
 
 valid_proximal_mu : list[float] = [1.0]
-
-
