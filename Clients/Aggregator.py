@@ -9,4 +9,3 @@ class Aggregator():
     def __repr__(self) -> str:
         return f"""Aggregator on IP {self.ip}"""
 
-
