@@ -1,13 +1,18 @@
 # Energy-FL
 
-Create a virtual environment
+### Make sure that libbluetooth-dev is installed
 
-### Note : You will have to install [pybluez](https://github.com/pybluez/pybluez) on the pi that is collecting power data
+```
+sudo apt install libbluetooth-dev
+```
+
+Create a virtual environment
 
 ```
 python -m venv venv
 source venv/bin/activate
 ```
+
 and pip install the requirements
 
 ```
