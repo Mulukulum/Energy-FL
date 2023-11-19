@@ -85,6 +85,22 @@ class Experiment:
     
     def __ne__(self, __value: object) -> bool:
         return not (self == __value )
+    
+    def __hash__(self) -> int:
+        return hash(((
+            self.__class__,
+            self.model,
+            self.fusion,
+            self.dataset,
+            self.batch_size,
+            self.rounds,
+            self.epochs,
+            self.sample_fraction,
+            self.proximal_mu,
+            self.version,
+            self.num_participating_parties,
+            self.run
+        )))
 
     def check_validity(self):
         if self.model not in valid_models:
