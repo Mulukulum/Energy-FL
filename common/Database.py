@@ -35,7 +35,7 @@ def adapt_and_convert():
     
     def convert_experiment(val : str):
         version, model, fusion, dataset, batch_size, rounds, epochs, sample_fraction, proximal_mu, num_parties, run = val.split(';')
-        return Experiment(model, fusion, dataset, int(batch_size), int(rounds), int(epochs), float(proximal_mu), float(sample_fraction), version, num_parties if num_parties is 'None' else int(num_parties), run if run is None else int(run))
+        return Experiment(model, fusion, dataset, int(batch_size), int(rounds), int(epochs), float(proximal_mu), float(sample_fraction), version, None if num_parties is 'None' else int(num_parties), None if run is 'None' else int(run))
     
     sqlite3.register_converter("experiment", convert_experiment)
     
