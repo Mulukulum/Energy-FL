@@ -15,8 +15,16 @@ class Aggregator:
             return
 
         import sqlite3
+        from common import adapt_and_convert
+        
         con = sqlite3.connect(r"Outputs/Experiments/log.db", detect_types=sqlite3.PARSE_DECLTYPES)
         cur = con.cursor()
         
-        cur.execute(f"""CREATE TABLE versions(version_no TEXT PRIMARY KEY, creation_time TEXT NOT NULL)""")
-        cur.execute(f"""CREATE TABLE log(expt_id INTEGER PRIMARY KEY, model TEXT NOT NULL, )""")
+        adapt_and_convert()
+        
+        cur.execute(f"""CREATE TABLE versions(version_no TEXT PRIMARY KEY, creation_time datetime NOT NULL)""")
+        cur.execute(f"""CREATE TABLE log(expt_id INTEGER PRIMARY KEY, expt experiment NOT NULL, is_finished bool NOT NULL)""")
+        
+        cur.close()
+        con.commit()
+        con.close()
