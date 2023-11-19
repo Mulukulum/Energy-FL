@@ -7,7 +7,7 @@ class sshRunner:
         
     def run(self, cmds : list) -> None:
         """
-        Provide a list with commands, each command is run one after the other on a bash instance on the 
+        Provide a list with commands terminated by a semicolon, each command is run one after the other on a bash instance on the 
         client machine with the energy-FL folder as the present working directory, with the venv activated, 
         and it exits automatically after the script ends
         """
