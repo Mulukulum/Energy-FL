@@ -34,10 +34,11 @@ class Experiment:
         batch_size: int,
         rounds: int,
         epochs: int,
-        proximal_mu: float = None,
+        proximal_mu: float = 0,
         sample_fraction: float = 1.0,
-        version: str = None,
-        num_parties : int | None = None
+        version: str = __version__,
+        num_parties : int | None = None,
+        run : int = None
     ) -> None:
         self.model = model
         self.fusion = fusion
@@ -46,10 +47,12 @@ class Experiment:
         self.rounds = rounds
         self.epochs = epochs
         self.sample_fraction = sample_fraction
-        self.proximal_mu = 0 if proximal_mu is None else proximal_mu
-        self.version = __version__ if version is None else version
+        self.proximal_mu = proximal_mu
+        self.version = version
         self.num_participating_parties = num_parties
         self.check_validity()
+        self.run = run
+        self.folder_name = f"{self.version};{self.model};{self.fusion};{self.dataset};{self.batch_size};{self.rounds};{self.epochs};{self.sample_fraction};{self.proximal_mu};{self.num_participating_parties};{self.run}"
 
     def __eq__(self, __value) -> bool:
         if self.__class__ is not __value.__class__ :
@@ -64,7 +67,8 @@ class Experiment:
             self.sample_fraction,
             self.proximal_mu,
             self.version,
-            self.num_participating_parties
+            self.num_participating_parties,
+            self.run
         ) != (__value.model,
          __value.fusion,
          __value.dataset,
@@ -74,7 +78,8 @@ class Experiment:
          __value.sample_fraction,
          __value.proximal_mu,
          __value.version,
-         __value.num_participating_parties): return False
+         __value.num_participating_parties,
+         __value.run): return False
         
         return True
     
@@ -92,3 +97,4 @@ class Experiment:
             raise ValueError(f"{self.sample_fraction} is not a valid sample-fraction")
         if not (0 <= self.proximal_mu):
             raise ValueError(f"{self.proximal_mu} is not a valid proximal-mu")
+

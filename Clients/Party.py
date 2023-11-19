@@ -11,13 +11,10 @@ class sshRunner:
         client machine with the energy-FL folder as the present working directory, with the venv activated, 
         and it exits automatically after the script ends
         """
-        
         user_cmds = ""
         for cmd in cmds[:-1]:
             user_cmds+=f'''{cmd} ; \n    '''
 
-        
-        
         cmd_string = f"""
 ssh -tt {self.client} << EOF
     cd ~/Energy-FL;
@@ -27,7 +24,6 @@ ssh -tt {self.client} << EOF
 EOF    
         """
         return subprocess.run(cmd_string, shell=True)
-        
 
 class Party:
     
@@ -35,4 +31,6 @@ class Party:
         self.ip = ip
         self.username = username
         self.ssh = sshRunner(f"{self.username}@{self.ip}")
+
+
 
