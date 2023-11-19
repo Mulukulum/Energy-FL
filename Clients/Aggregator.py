@@ -83,3 +83,37 @@ class Aggregator:
         
         return list_of_experiments
     
+    def get_running_experiments(self):
+        
+        con = sqlite3.connect(r"Outputs/Experiments/log.db", detect_types=sqlite3.PARSE_DECLTYPES)
+        cur = con.cursor()
+        
+        adapt_and_convert()
+        
+        res = cur.execute(r"""SELECT expt FROM log WHERE is_running=1""")
+        res = res.fetchall()
+        list_of_experiments = [expt[0] for expt in res]
+        
+        con.commit()
+        cur.close()
+        con.close()
+        
+        return list_of_experiments
+        
+    def get_failed_experiments(self):
+        
+        con = sqlite3.connect(r"Outputs/Experiments/log.db", detect_types=sqlite3.PARSE_DECLTYPES)
+        cur = con.cursor()
+        
+        adapt_and_convert()
+        
+        res = cur.execute(r"""SELECT expt FROM log WHERE has_failed=1""")
+        res = res.fetchall()
+        list_of_experiments = [expt[0] for expt in res]
+        
+        con.commit()
+        cur.close()
+        con.close()
+        
+        return list_of_experiments
+    
