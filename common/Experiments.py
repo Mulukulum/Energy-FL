@@ -18,7 +18,6 @@ valid_datasets = ["cifar10", "mnist"]
 
 valid_proximal_mu: list[float] = [1.0]
 
-
 class Experiment:
     # * this entire class should probably be a dataclass but I decided to write it manually since i'm not familiar with dataclasses
 
@@ -39,7 +38,6 @@ class Experiment:
         sample_fraction: float = 1.0,
         version: str = None,
         num_parties : int | None = None
-        
     ) -> None:
         self.model = model
         self.fusion = fusion
@@ -53,8 +51,8 @@ class Experiment:
         self.num_participating_parties = num_parties
         self.check_validity()
 
-    def __eq__(self, __value: object) -> bool:
-        if not isinstance(__value, Experiment):
+    def __eq__(self, __value) -> bool:
+        if self.__class__ is not __value.__class__ :
             return False
         if (
             self.model,
@@ -66,6 +64,7 @@ class Experiment:
             self.sample_fraction,
             self.proximal_mu,
             self.version,
+            self.num_participating_parties
         ) != (__value.model,
          __value.fusion,
          __value.dataset,
@@ -74,9 +73,13 @@ class Experiment:
          __value.epochs,
          __value.sample_fraction,
          __value.proximal_mu,
-         __value.version): return False
+         __value.version,
+         __value.num_participating_parties): return False
         
         return True
+    
+    def __ne__(self, __value: object) -> bool:
+        return not (self == __value )
 
     def check_validity(self):
         if self.model not in valid_models:
