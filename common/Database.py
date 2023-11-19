@@ -9,6 +9,8 @@ def adapt_and_convert():
     Experiment ('experiment')
     bool ('bool')
     datetime.datetime ('datetime')
+    
+    https://docs.python.org/3/library/sqlite3.html#how-to-write-adaptable-objects
     ```
     """
     
