@@ -26,7 +26,7 @@ class Aggregator:
         adapt_and_convert()
         
         cur.execute(f"""CREATE TABLE versions(version_no TEXT PRIMARY KEY, creation_time datetime NOT NULL)""")
-        cur.execute(f"""CREATE TABLE log(expt_id INTEGER PRIMARY KEY, expt experiment NOT NULL, is_finished bool NOT NULL)""")
+        cur.execute(f"""CREATE TABLE log(expt_id INTEGER PRIMARY KEY, expt experiment NOT NULL, is_finished bool NOT NULL, is_running bool NOT NULL, has_failed bool NOT NULL)""")
         
         con.commit()
         cur.close()
