@@ -114,3 +114,37 @@ class Experiment:
         if not (0 <= self.proximal_mu):
             raise ValueError(f"{self.proximal_mu} is not a valid proximal-mu")
 
+def generate_all_experiments(rounds_and_epochs : list[tuple[int, int]], 
+                             batch_sizes : list[int],
+                             runs : int,
+                             num_parties : int,
+                             ) -> list[Experiment]:
+    all_experiments = []
+    for dataset in valid_datasets :
+        for model in valid_models :
+            for fusion in valid_fusions :
+                for rounds, epochs in rounds_and_epochs :
+                    for batch_size in batch_sizes:
+                        for run in range(1, runs+1):
+                            
+                            expt = Experiment(model = model,
+                                       fusion=fusion,
+                                       dataset=dataset,
+                                       batch_size=batch_size,
+                                       rounds=rounds,
+                                       epochs=epochs,
+                                       num_parties=num_parties,
+                                       run = run
+                                       )
+                            
+                            all_experiments.append(expt)
+    
+    return all_experiments            
+    
+    
+    
+    
+    
+    
+    
+    
