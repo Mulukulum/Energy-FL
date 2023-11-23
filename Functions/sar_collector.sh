@@ -47,7 +47,7 @@ for ((i=0;i<${#hosts[@]};++i)); do
     if [ "$username" = "user" ]; then
 	echo "user123" | sudo -S kill -INT $(pgrep sar) #>/dev/null 2>&1
     else
-    	ssh "$username@$host" "sudo kill -INT \$(pgrep sar)" >/dev/null 2>&1
+    	ssh "$username@$host" "kill -INT \$(pgrep sar)" >/dev/null 2>&1
     fi
     echo -e "SAR data collection stopped on ${color1}${host}\033[0m."
 done
