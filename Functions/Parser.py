@@ -24,9 +24,9 @@ def main(party_usernames: list, name, sar_timeseries_userlist: list = None):
     try:
         pathlib.Path(output_dir).mkdir(parents=True)
     except FileExistsError:
-        makenew = True
+        makenew_files = True
     else:
-        makenew = False
+        makenew_files = False
     # We have the files, now its just a matter of opening and writing everything
     
     # Wipe/Create the file
@@ -39,7 +39,7 @@ def main(party_usernames: list, name, sar_timeseries_userlist: list = None):
         eval_postsync_file = f"{user}-synced.txt"
         success = True
         
-
+        #This Checks if all the required files exist
         try:
             with open("Outputs/SAR/" + sar_file) as f:
                 ...
@@ -113,7 +113,7 @@ def main(party_usernames: list, name, sar_timeseries_userlist: list = None):
                     CPU, MEM, DISK, NET = values
 
                     # Wipe the file
-                    if makenew:
+                    if makenew_files:
                         with open(output_dir + f"{user}-SAR.csv", "w", newline="") as _:
                             ...
                     with open(output_dir + f"{user}-SAR.csv", "a", newline="") as f:
