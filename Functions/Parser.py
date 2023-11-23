@@ -28,6 +28,10 @@ def main(party_usernames: list, name, sar_timeseries_userlist: list = None):
     else:
         makenew = False
     # We have the files, now its just a matter of opening and writing everything
+    
+    # Wipe/Create the file
+    with open(output_dir + "Parties.csv", "w", newline="") as _:
+        ...
 
     for user in party_usernames:
         sar_file = f"{user}-sar.txt"
@@ -88,18 +92,12 @@ def main(party_usernames: list, name, sar_timeseries_userlist: list = None):
                     postsync_accuracy,
                 )
 
-                # Wipe the file
-                if makenew:
-                    with open(output_dir + "Parties.csv", "w", newline="") as _:
-                        ...
+                
 
                 with open(output_dir + "Parties.csv", "a", newline="") as f:
                     writer = csv.writer(f)
                     writer.writerow(format)
 
-
-                with open(output_dir + f"{user}-SAR.csv", "w", newline="") as _:
-                    ...
             if user in sar_timeseries_userlist:
                 # Parse Timeseries Data and write it to the file
                 power = ParsingFunctions.get_power_data("Outputs/Power/Data.pkl")
@@ -115,7 +113,9 @@ def main(party_usernames: list, name, sar_timeseries_userlist: list = None):
                     CPU, MEM, DISK, NET = values
 
                     # Wipe the file
-                    
+                    if makenew:
+                        with open(output_dir + f"{user}-SAR.csv", "w", newline="") as _:
+                            ...
                     with open(output_dir + f"{user}-SAR.csv", "a", newline="") as f:
                         writer = csv.writer(f)
                         format = (
