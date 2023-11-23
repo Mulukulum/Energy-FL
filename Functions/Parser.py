@@ -100,6 +100,9 @@ def main(party_usernames: list, name, sar_timeseries_userlist: list = None):
 
             if user in sar_timeseries_userlist:
                 # Parse Timeseries Data and write it to the file
+                if makenew_files:
+                        with open(output_dir + f"{user}-SAR.csv", "w", newline="") as _:
+                            ...
                 power = ParsingFunctions.get_power_data("Outputs/Power/Data.pkl")
                 for datapoint in timeseries:
                     timestamp, values = datapoint
@@ -113,9 +116,7 @@ def main(party_usernames: list, name, sar_timeseries_userlist: list = None):
                     CPU, MEM, DISK, NET = values
 
                     # Wipe the file
-                    if makenew_files:
-                        with open(output_dir + f"{user}-SAR.csv", "w", newline="") as _:
-                            ...
+                    
                     with open(output_dir + f"{user}-SAR.csv", "a", newline="") as f:
                         writer = csv.writer(f)
                         format = (
