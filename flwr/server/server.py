@@ -153,15 +153,6 @@ class Server:
         log(INFO, "FL finished in %s", elapsed)
         log(INFO, "Starting Post Sync Evaluations")
         res_fed = self.evaluate_round(server_round=-1, timeout=timeout)
-        if res_fed is not None:
-                loss_fed, evaluate_metrics_fed, _ = res_fed
-                if loss_fed is not None:
-                    history.add_loss_distributed(
-                        server_round=current_round, loss=loss_fed
-                    )
-                    history.add_metrics_distributed(
-                        server_round=current_round, metrics=evaluate_metrics_fed
-                    )
         return history
 
     def evaluate_round(
