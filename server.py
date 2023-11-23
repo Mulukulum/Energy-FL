@@ -163,6 +163,7 @@ def main(args: dict = None):
       {model=}
       """
     )
+    time.sleep(3)
     fusion = fusion_algos_translator[fusion]
     # Define strategy
     
