@@ -1,7 +1,5 @@
 #!/bin/bash
 
-echo "user123" | sudo -S pwd
-
 color='\033[1;31m' # set the color to bold red
 
 # Define the list of hosts to run the SAR command on
@@ -47,9 +45,9 @@ for ((i=0;i<${#hosts[@]};++i)); do
     host=${hosts[i]}
     username=${usernames[i]}
     if [ "$username" = "user" ]; then
-	sudo kill -INT $(pgrep sar) #>/dev/null 2>&1
+	echo "user123" | sudo -S kill -INT $(pgrep sar) #>/dev/null 2>&1
     else
-    	ssh "$username@$host" "kill -INT \$(pgrep sar)" >/dev/null 2>&1
+    	ssh "$username@$host" "sudo kill -INT \$(pgrep sar)" >/dev/null 2>&1
     fi
     echo -e "SAR data collection stopped on ${color1}${host}\033[0m."
 done
