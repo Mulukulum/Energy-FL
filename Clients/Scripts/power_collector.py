@@ -17,12 +17,12 @@ import zmq
 import argparse
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--port", help="ZMQ Port that aggregator is broadcasting on", type=int)
+parser.add_argument("--zmq_ip", help="ZMQ Port that aggregator is broadcasting on", type=int)
 parser.add_argument("--address", help="Address of the bluetooth multimeter", type=str)
 parser.add_argument("--filename", help="Filename of the pkl file", type=str)
 args = parser.parse_args()
 
-AGGREGATOR_ZMQ_PORT, UM25C_ADDRESS, name = args.port, args.address, args.filename
+ZMQ_BROADCAST_ADDRESS, UM25C_ADDRESS, name = args.zmq_ip, args.address, args.filename
 
 def connect_to_usb_tester(bt_addr):
     sock = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
@@ -105,7 +105,7 @@ def wait_until_ready(value, SOCKET) -> None:
 
 CONTEXT = zmq.Context()
 SOCKET = CONTEXT.socket(zmq.SUB)
-SOCKET.connect(f"tcp://{AGGREGATOR_ZMQ_PORT}")
+SOCKET.connect(f"tcp://{ZMQ_BROADCAST_ADDRESS}")
 SOCKET.setsockopt(zmq.SUBSCRIBE, b'')
 
 interval = 0.2

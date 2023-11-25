@@ -18,6 +18,9 @@ expect "Agent registered"
 
 # If the device is already paired, we remove it first, so we are in a known state of affairs;
 # ... we also handle the case in which the device is not already paired.
+send "power on\r"
+expect "Changing power on succeeded"
+
 send "remove $DEV\r"
 expect -re "removed|not available"
 

@@ -54,12 +54,12 @@ def run_experiment(expt : Experiment):
     # Start the Power Collections, SAR and then finally start the parties and the server
     
     for collector in bluetooth_collectors:
-        ...
+        collector.collect_power_data()
     
     sar_process = subprocess.Popen(["./Clients/Scripts/sar_collector.sh"], shell=True, stdin=subprocess.PIPE)
     
-    for party in parties:
-        ...
+    for cid, party in enumerate(parties):
+        party.start_client_server(agg_ip=Configuration.IP_AGGREGATOR, agg_port=Configuration.AGGREGATOR_FLOWER_SERVER_PORT, cid=cid, dataset=expt.dataset, num_parties=expt.num_participating_parties)
     
     args = {
         "rounds" : expt.rounds,
@@ -77,5 +77,7 @@ def run_experiment(expt : Experiment):
     
     sar_process.communicate(b"\n")
     aggregator.ZMQStopPowerCollection()
+    
+    #! Done!
     
 

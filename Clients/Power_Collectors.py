@@ -15,6 +15,6 @@ class PowerCollector:
     def pair_to_tester(self):
         return self.ssh.run([f"./Clients/Scripts/connect_to_bt_multimeter.sh {self.tester_address} ;"])
     
-    def collect_power_data(self):
-        self.ssh.Popen([f"""./Clients/Scripts/power_collector.py --filename "{self.experiment_name}" --port {self.broadcast_port} --address {self.tester_address} ;"""])
+    def collect_power_data(self, agg_ip : str):
+        self.ssh.Popen([f"""python /Clients/Scripts/power_collector.py --filename "{self.experiment_name}" --zmq_ip {agg_ip}:{self.broadcast_port} --address {self.tester_address} ;"""])
 
