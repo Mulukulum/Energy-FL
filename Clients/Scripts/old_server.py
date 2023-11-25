@@ -1,19 +1,7 @@
 from typing import List, Tuple
 from flwr.common import Metrics
-
-from common.Configuration import IP_CLIENTS
-
-rounds = 3
-epochs = 4
-
-dataset = "mnist"
-num_parties: int = len(IP_CLIENTS) - 1 
-batch_size = 32
-fusion = "FedAvg"
-model = "tf-cnn"
-sample_fraction = 1.0
-run = None
-proximal_mu = 1
+import common.Configuration as Configuration
+import flwr as fl
 
 
 def weighted_average(metrics: List[Tuple[int, Metrics]]) -> Metrics:
@@ -29,7 +17,7 @@ def weighted_average(metrics: List[Tuple[int, Metrics]]) -> Metrics:
 
 
 def fit_config(
-    server_round: int, *_, epochs: int = epochs, batch_size: int = batch_size
+    server_round: int, *, epochs: int, batch_size: int
 ):
     """Return a configuration with static batch size and (local) epochs."""
     config = {
@@ -53,3 +41,80 @@ def evaluate_config(server_round: int):
         log_final = False
         synced = ""
     return {"log_final": log_final, "synced": synced}
+
+def main(args: dict = None):
+    """
+    Pass args as a dictionary with the keys :
+
+    ```
+    rounds
+    epochs
+    run
+    dataset
+    batch_size
+    fusion
+    model
+    sample_fraction
+    proximal_mu
+    ```
+    """
+    
+    min_num_clients = len(Configuration.IP_CLIENTS)
+    
+    if args is not None:
+        rounds = args['rounds']
+        epochs = args['epochs']
+        run = args['run']
+        dataset = args['dataset']
+        batch_size = args['batch_size']
+        fusion = args['fusion']
+        model = args['model']
+        sample_fraction = args['sample_fraction']        
+        proximal_mu = args.get('proximal_mu', 1)
+        
+    print("\n" * 3)
+
+    print(
+        f"""
+      {'' if run is None else f'{run=}'}
+      {rounds=}
+      {epochs=}
+      {dataset=}
+      num_parties={len(Configuration.IP_CLIENTS)}
+      {batch_size=}
+      {fusion=}
+      {model=}
+      """
+    )
+    fusion = Configuration.FUSION_ALGOS_TRANSLATOR[fusion]
+    # Define strategy
+    
+    if fusion == Configuration.FUSION_ALGOS_TRANSLATOR['FedProx']:
+        strategy = fusion(
+        fraction_fit=sample_fraction,
+        fraction_evaluate=sample_fraction,
+        min_fit_clients=min_num_clients,
+        on_fit_config_fn=fit_config,
+        min_available_clients=min_num_clients,
+        evaluate_metrics_aggregation_fn=weighted_average,
+        on_evaluate_config_fn=evaluate_config,
+        proximal_mu = proximal_mu,
+    )
+    else:
+        strategy = fusion(
+            fraction_fit=sample_fraction,
+            fraction_evaluate=sample_fraction,
+            min_fit_clients=min_num_clients,
+            on_fit_config_fn=fit_config,
+            min_available_clients=min_num_clients,
+            evaluate_metrics_aggregation_fn=weighted_average,
+            on_evaluate_config_fn=evaluate_config,
+        ) 
+
+    server_address = str(Configuration.IP_AGGREGATOR) + ":" + str(Configuration.AGGREGATOR_FLOWER_SERVER_PORT)
+
+    fl.server.start_server(
+        server_address=server_address,
+        config=fl.server.ServerConfig(num_rounds=rounds),
+        strategy=strategy,
+    )
