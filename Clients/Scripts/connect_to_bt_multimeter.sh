@@ -10,7 +10,7 @@ if {$argc != 2} {
 # First argument needs to be the device MAC address;
 # ... second argument needs to be the PIN.
 set DEV [lindex $argv 0]
-set PIN [lindex $argv 1]
+set PIN "1234"
 
 # Do not wait after getting a response.
 set timeout -1

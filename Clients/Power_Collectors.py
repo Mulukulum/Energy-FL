@@ -9,6 +9,12 @@ class PowerCollector:
         self.party = collection_party
         self.tester_address = bluetooth_address 
         self.broadcast_port = zmq_broadcast_port
+        
+    def pair_to_tester(self):
+        self.ssh.run(["./Clients/Scripts/connect_to_bt_multimeter.sh ;"])
+    
+    def collect_power_data(self):
+        self.ssh.run(["./Clients/Scripts/power_collector.py ;"])
 
 '''
 https://sigrok.org/wiki/RDTech_UM24C
