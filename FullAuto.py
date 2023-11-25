@@ -1,7 +1,8 @@
 #! File to run experiments
 
-run_finished_experiments = False
+run_finished_experiments = False # Change to True to re-run everything
 
+import subprocess
 from common.Experiments import generate_all_experiments
 from common import Experiment
 from Clients import Aggregator, Party, PowerCollector
@@ -19,13 +20,28 @@ experiments = generate_all_experiments(rounds_and_epochs=rounds_and_epochs, batc
 
 def run_experiment(expt : Experiment):
     
+    
     print(expt)
     time.sleep(3)
 
-    #Setup all the clients, aggregators and power collectors
+    # Setup all the clients, aggregators and power collectors
     
-    agg = Aggregator(ip=Configuration.IP_AGGREGATOR, username='user', flwrPort=Configuration.AGGREGATOR_FLOWER_SERVER_PORT, zmqPort=Configuration.AGGREGATOR_ZMQ_BROADCAST_PORT)
-    agg.setupZMQ()
+    aggregator = Aggregator(ip=Configuration.IP_AGGREGATOR, username=Configuration.getuser, flwrPort=Configuration.AGGREGATOR_FLOWER_SERVER_PORT, zmqPort=Configuration.AGGREGATOR_ZMQ_BROADCAST_PORT)
+    parties = [Party(ip=ip, username=username) for username, ip in Configuration.IP_CLIENTS.items()]
+    
+    bluetooth_collectors = [PowerCollector()]
+    from Clients.Scripts.old_server import main as run_flwr_server
+    
+    # Setup SAR
+    from common import sar
+    all_ips = Configuration.IP_CLIENTS.copy()
+    all_ips.update({Configuration.AGGREGATOR_USERNAME : Configuration.IP_AGGREGATOR})
+    sar.initialize_sar(usernames_ips=all_ips)
+    subprocess.run("chmod u+x Clients/Scripts/sar_collector.sh", shell=True)
+    
+    # Setup Bluetooth
+    
+    
     
     
 

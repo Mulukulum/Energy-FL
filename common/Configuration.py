@@ -6,6 +6,8 @@ import flwr as fl
 from common.Experiments import valid_datasets as VALID_DATASETS
 from common.Experiments import valid_fusions as VALID_FUSION_ALGOS
 from common.Experiments import Experiment
+import getpass
+
 FUSION_ALGOS_TRANSLATOR = Experiment.fusion_translator
 
 IP_CLIENTS = {
@@ -17,7 +19,11 @@ IP_CLIENTS = {
 
 IP_AGGREGATOR = "10.8.1.45"
 
-AGGREGATOR_FLOWER_SERVER_PORT = 5015
+AGGREGATOR_FLOWER_SERVER_PORT = 7011
+
+ 
+AGGREGATOR_USERNAME = getpass.getuser()
+
 
 AGGREGATOR_ZMQ_BROADCAST_PORT = 6010
 

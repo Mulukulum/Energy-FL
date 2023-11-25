@@ -145,7 +145,7 @@ class Aggregator:
         self.broadcast = self.context.socket(zmq.PUB)
         self.broadcast.bind(f"tcp://{self.ip}:{self.zmqPort}")
         
-    def zmqSend(self):
+    def zmqStopPowerCollection(self):
         from common import Configuration
         self.broadcast.send_pyobj(Configuration.ZMQ_STOP_POWER_COLLECTION)
         
