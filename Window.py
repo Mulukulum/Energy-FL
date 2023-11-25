@@ -3,7 +3,6 @@
 
 from Clients import Aggregator
 from common.Database import adapt_and_convert
-import sqlite3
 
 Aggregator.create_experiment_log()
 
