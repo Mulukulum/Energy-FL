@@ -12,8 +12,16 @@ import time
 import threading
 import sys
 import zmq
+import argparse
 
-_, AGGREGATOR_ZMQ_PORT, UM25C_ADDRESS = sys.argv 
+parser = argparse.ArgumentParser()
+parser.add_argument("--port", help="ZMQ Port that aggregator is broadcasting on", type=int)
+parser.add_argument("--address", help="Address of the bluetooth multimeter", type=str)
+parser.add_argument("--filename", help="Filename of the pkl file", type=str)
+args = parser.parse_args()
+
+
+AGGREGATOR_ZMQ_PORT, UM25C_ADDRESS, name = args.port, args.address, args.filename
 
 
 STOP_POWER_COLLECTION = 300
@@ -74,8 +82,17 @@ def collect(
 
     global UM25C_ADDRESS
     global STOP_COLLECTING
-    filepath = r"Outputs/Power/Data.pkl"
+    
+    filepath = f"Outputs/Power/{name}.pkl"
     sock = connect_to_usb_tester(UM25C_ADDRESS)
+    
+    with open(filepath, 'wb') as f:
+        d = read_measurements(sock)
+        #Time with seconds to two decimal points
+        now = dt.now().strftime(r"%H:%M:%S.%f")[:-4]
+        pickle.dump({now : d}, f)
+        time.sleep(interval)
+            
     sock.close()
 
 def wait_until_ready(value, SOCKET, msg=None,) -> None:
@@ -97,7 +114,7 @@ def wait_until_ready(value, SOCKET, msg=None,) -> None:
 
 if __name__ == "__main__":
     
-    interval = 1
+    interval = 0.2
     process = threading.Thread(target=collect, args=[interval],)
     process.start()
     wait_until_ready(STOP_POWER_COLLECTION, SOCKET)

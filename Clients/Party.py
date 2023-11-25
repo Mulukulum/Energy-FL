@@ -25,6 +25,28 @@ ssh -tt {self.client} << EOF
 EOF    
         """
         return subprocess.run(cmd_string, shell=True, capture_output=True)
+    
+    def Popen(self, cmds : list) -> None :
+        """
+        Provide a list with commands terminated by a semicolon, each command is run one after the other on a bash instance on the 
+        client machine with the energy-FL folder as the present working directory, with the venv activated, 
+        and it exits automatically after the script ends
+        
+        This method exists to run things async, like for example collection of bluetooth data
+        """
+        user_cmds = ""
+        for cmd in cmds[:-1]:
+            user_cmds+=f'''{cmd} ; \n    '''
+
+        cmd_string = f"""
+ssh -tt {self.client} << EOF
+    cd ~/Energy-FL;
+    source venv/bin/activate;
+    {user_cmds}
+    exit;
+EOF    
+        """
+        return subprocess.Popen(cmd_string, shell=True)
 
 class Party:
     
