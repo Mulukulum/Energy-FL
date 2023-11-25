@@ -148,3 +148,4 @@ class Aggregator:
     def zmqSend(self):
         from common import Configuration
         self.broadcast.send_pyobj(Configuration.ZMQ_STOP_POWER_COLLECTION)
+        
