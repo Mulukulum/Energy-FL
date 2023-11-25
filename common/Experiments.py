@@ -18,13 +18,13 @@ valid_datasets = ["cifar10", "mnist"]
 
 valid_proximal_mu: list[float] = [1.0]
 
-class Experiment:
-    # * this entire class should probably be a dataclass but I decided to write it manually since i'm not familiar with dataclasses
-
-    fusion_translator = {
+fusion_translator = {
         "FedAvg": fl.server.strategy.FedAvg,
         "FedProx": fl.server.strategy.FedProx,
     }
+
+class Experiment:
+    # * this entire class should probably be a dataclass but I decided to write it manually since i'm not familiar with dataclasses
 
     def __init__(
         self,

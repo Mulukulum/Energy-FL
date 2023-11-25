@@ -26,10 +26,16 @@ def run_experiment(expt : Experiment):
 
     # Setup all the clients, aggregators and power collectors
     
-    aggregator = Aggregator(ip=Configuration.IP_AGGREGATOR, username=Configuration.getuser, flwrPort=Configuration.AGGREGATOR_FLOWER_SERVER_PORT, zmqPort=Configuration.AGGREGATOR_ZMQ_BROADCAST_PORT)
-    parties = [Party(ip=ip, username=username) for username, ip in Configuration.IP_CLIENTS.items()]
+    aggregator : Aggregator = Aggregator(ip=Configuration.IP_AGGREGATOR, username=Configuration.getuser, flwrPort=Configuration.AGGREGATOR_FLOWER_SERVER_PORT, zmqPort=Configuration.AGGREGATOR_ZMQ_BROADCAST_PORT)
+    parties : list[Party] = [Party(ip=ip, username=username) for username, ip in Configuration.IP_CLIENTS.items()]
     
-    bluetooth_collectors = [PowerCollector()]
+    bluetooth_collectors : list[PowerCollector] = []
+    
+    for user, ip in Configuration.IP_POWER_COLLECTORS.items() :
+        party = Configuration.POWER_COLLECTOR_CONNECTED_DEVICE[user]
+        bt_addr = Configuration.UM25C_ADDR_FOR_POWER_COLLECTORS[user]
+        bluetooth_collectors.append(PowerCollector(ip=ip, username=user, collection_party=party, bluetooth_address=bt_addr, experiment=expt))
+    
     from Clients.Scripts.old_server import main as run_flwr_server
     
     # Setup SAR
@@ -37,11 +43,39 @@ def run_experiment(expt : Experiment):
     all_ips = Configuration.IP_CLIENTS.copy()
     all_ips.update({Configuration.AGGREGATOR_USERNAME : Configuration.IP_AGGREGATOR})
     sar.initialize_sar(usernames_ips=all_ips)
-    subprocess.run("chmod u+x Clients/Scripts/sar_collector.sh", shell=True)
+    subprocess.run(["chmod u+x Clients/Scripts/sar_collector.sh"], shell=True)
     
     # Setup Bluetooth
+    for collector in bluetooth_collectors:
+        collector.pair_to_tester()
     
+    # Ready to start the experiment
     
+    # Start the Power Collections, SAR and then finally start the parties and the server
     
+    for collector in bluetooth_collectors:
+        ...
+    
+    sar_process = subprocess.Popen(["./Clients/Scripts/sar_collector.sh"], shell=True, stdin=subprocess.PIPE)
+    
+    for party in parties:
+        ...
+    
+    args = {
+        "rounds" : expt.rounds,
+        "epochs" : expt.epochs,
+        "run" : expt.run,
+        "dataset" : expt.dataset,
+        "batch_size" : expt.batch_size,
+        "fusion" : expt.fusion,
+        "model" : expt.model,
+        "sample_fraction" : expt.sample_fraction,
+        "proximal_mu" : expt.proximal_mu,
+    }
+    
+    run_flwr_server(args=args)
+    
+    sar_process.communicate(b"\n")
+    aggregator.ZMQStopPowerCollection()
     
 

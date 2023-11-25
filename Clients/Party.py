@@ -67,14 +67,15 @@ if [ -d Outputs/Experiments/{exp.folder_name} ]; then echo 'exists' ; fi ;
             #Create the folder if it doesn't exist
         pathlib.Path.mkdir(f"Outputs/Experiments/{exp.folder_name}/{self.username}", exist_ok=True, parents=True)
         #SCP the file over
-        res = subprocess.run([f"scp {self.username}@{self.ip}:~/Energy-FL/Outputs/Experiments/{exp.folder_name} ./Outputs/Experiments/{exp.folder_name}/{self.username}/ "], shell=True)
+        res = subprocess.run([f"scp -r {self.username}@{self.ip}:~/Energy-FL/Outputs/Experiments/{exp.folder_name} ./Outputs/Experiments/{exp.folder_name}/{self.username}/ "], shell=True)
         if res.returncode != 0 :
             # TODO : Log that the scp failed
             return 
         # Extract all the files from said folder incl subfolders and delete the original folder
         subprocess.run([f"mv Outputs/Experiments/{exp.folder_name}/{self.username}/* Outputs/Experiments/{exp.folder_name}"], shell=True)
         subprocess.run([f"rm -rf Outputs/Experiments/{exp.folder_name}/{self.username}"], shell=True)
-        
+    
+    
 
 
 
