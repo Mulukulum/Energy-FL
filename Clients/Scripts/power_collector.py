@@ -65,13 +65,10 @@ def read_measurements(sock):
     mAh, mWh = [x for x in struct.unpack("!II", d[102:110])]
     return {"voltage" : voltage, "current" : current, "power" : power, "mAh" : mAh, "mWh" : mWh }
 
-
 def collect(
     interval: float,
 ):
-    """
-    Give the interval in seconds
-    """
+    
     import pickle
     from datetime import datetime as dt
 
@@ -79,15 +76,6 @@ def collect(
     global STOP_COLLECTING
     filepath = r"Outputs/Power/Data.pkl"
     sock = connect_to_usb_tester(UM25C_ADDRESS)
-    with open(filepath, "wb") as f:
-        while STOP_COLLECTING is False:
-            measure = read_measurements(sock)
-            if isinstance(measure, dict):
-                # Add the current time as a timestamp
-                timestamp = dt.now().strftime("%H:%M:%S")
-                dictionary = {timestamp: measure}
-                pickle.dump(dictionary, f)
-                time.sleep(interval)
     sock.close()
 
 def wait_until_ready(value, SOCKET, msg=None,) -> None:
