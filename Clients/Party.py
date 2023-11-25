@@ -32,7 +32,7 @@ EOF
         client machine with the energy-FL folder as the present working directory, with the venv activated, 
         and it exits automatically after the script ends
         
-        This method exists to run things async, like for example collection of bluetooth data
+        This method exists to run things async, like for example collection of bluetooth data can't be done one by one
         """
         user_cmds = ""
         for cmd in cmds[:-1]:
