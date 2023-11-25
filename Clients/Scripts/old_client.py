@@ -7,7 +7,6 @@ import tensorflow as tf
 
 parser = argparse.ArgumentParser(description="Flower Embedded devices")
 NUM_CLIENTS = -1
-PI_NAME = ""
 
 with open("Outputs/Experiments/epoch_logs.csv", "w") as f:
     ...
