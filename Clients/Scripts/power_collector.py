@@ -13,7 +13,6 @@ import bluetooth
 import struct
 import time
 import threading
-import sys
 import zmq
 import argparse
 
