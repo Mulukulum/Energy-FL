@@ -14,6 +14,7 @@ class Aggregator:
     def __repr__(self) -> str:
         return f"""Aggregator {self.username}@{self.ip} hosting flwr on {self.flwrPort} and broadcasting on {self.zmqPort}"""
 
+    @classmethod
     def create_experiment_log(self) -> None:
         #! This assumes that the current working directory is always the ~/Energy-FL/ so that is important to keep in mind
         
@@ -32,6 +33,7 @@ class Aggregator:
         cur.close()
         con.close()
         
+    @classmethod
     def get_completed_experiments(self):
         
         con = sqlite3.connect(r"Outputs/Experiments/log.db", detect_types=sqlite3.PARSE_DECLTYPES)
@@ -49,6 +51,7 @@ class Aggregator:
         
         return list_of_experiments
     
+    @classmethod
     def get_incomplete_experiments(self):
         
         con = sqlite3.connect(r"Outputs/Experiments/log.db", detect_types=sqlite3.PARSE_DECLTYPES)
@@ -66,6 +69,7 @@ class Aggregator:
         
         return list_of_experiments
 
+    @classmethod
     def get_experiments(self):
         
         con = sqlite3.connect(r"Outputs/Experiments/log.db", detect_types=sqlite3.PARSE_DECLTYPES)
@@ -82,7 +86,8 @@ class Aggregator:
         con.close()
         
         return list_of_experiments
-    
+
+    @classmethod
     def get_running_experiments(self):
         
         con = sqlite3.connect(r"Outputs/Experiments/log.db", detect_types=sqlite3.PARSE_DECLTYPES)
@@ -99,7 +104,8 @@ class Aggregator:
         con.close()
         
         return list_of_experiments
-        
+    
+    @classmethod
     def get_failed_experiments(self):
         
         con = sqlite3.connect(r"Outputs/Experiments/log.db", detect_types=sqlite3.PARSE_DECLTYPES)
