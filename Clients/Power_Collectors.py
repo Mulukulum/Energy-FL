@@ -1,5 +1,6 @@
 from Clients.Party import sshRunner, Party
 from common import Experiment
+
 class PowerCollector:
     
     def __init__(self, ip: str, username: str, collection_party : Party, bluetooth_address : str, zmq_broadcast_port : int, experiment : Experiment ) -> None:
