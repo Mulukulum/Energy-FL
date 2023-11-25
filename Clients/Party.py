@@ -75,7 +75,8 @@ if [ -d Outputs/Experiments/{exp.folder_name} ]; then echo 'exists' ; fi ;
         subprocess.run([f"mv Outputs/Experiments/{exp.folder_name}/{self.username}/* Outputs/Experiments/{exp.folder_name}"], shell=True)
         subprocess.run([f"rm -rf Outputs/Experiments/{exp.folder_name}/{self.username}"], shell=True)
     
-    
+    def start_client_server(self, agg_ip : str, agg_port : int, cid : int, dataset : str, num_parties : int):
+        self.ssh.Popen([f"python Clients/Scripts/old_client.py --agg_ip {agg_ip} --agg_port {agg_port} --cid {cid} --dataset {dataset} --client_ip {self.ip} --num_parties {num_parties} --pi_name {self.username} "])
 
 
 
