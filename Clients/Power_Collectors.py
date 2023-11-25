@@ -15,5 +15,5 @@ class PowerCollector:
         self.ssh.Popen([f"./Clients/Scripts/connect_to_bt_multimeter.sh {self.tester_address} ;"])
     
     def collect_power_data(self):
-        self.ssh.Popen([f"./Clients/Scripts/power_collector.py --filename {self.experiment_name} --port {self.broadcast_port} --address {self.tester_address} ;"])
+        self.ssh.Popen([f"""./Clients/Scripts/power_collector.py --filename "{self.experiment_name}_{self.party.username}" --port {self.broadcast_port} --address {self.tester_address} ;"""])
 

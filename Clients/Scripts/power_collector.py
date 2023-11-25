@@ -6,6 +6,9 @@ SET_DATA_GROUP_FIVE = 0xA5
 DIM_SCREEN = 0xD0
 SET_SCREENSAVER = 0xE1
 
+STOP_POWER_COLLECTION = 300
+STOP_COLLECTING = False
+
 import bluetooth
 import struct
 import time
@@ -20,17 +23,7 @@ parser.add_argument("--address", help="Address of the bluetooth multimeter", typ
 parser.add_argument("--filename", help="Filename of the pkl file", type=str)
 args = parser.parse_args()
 
-
 AGGREGATOR_ZMQ_PORT, UM25C_ADDRESS, name = args.port, args.address, args.filename
-
-
-STOP_POWER_COLLECTION = 300
-STOP_COLLECTING = False
-
-CONTEXT = zmq.Context()
-SOCKET = CONTEXT.socket(zmq.SUB)
-SOCKET.connect(f"tcp://{AGGREGATOR_ZMQ_PORT}")
-SOCKET.setsockopt(zmq.SUBSCRIBE, b'')
 
 def connect_to_usb_tester(bt_addr):
     sock = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
@@ -46,7 +39,6 @@ def connect_to_usb_tester(bt_addr):
     else:
         raise e
     return sock
-
 
 def read_data(sock):
     sock.send(bytes([REQUEST_DATA_DUMP]))
@@ -85,20 +77,20 @@ def collect(
     
     filepath = f"Outputs/Power/{name}.pkl"
     sock = connect_to_usb_tester(UM25C_ADDRESS)
+    set_initial_parameters(sock)
     
     with open(filepath, 'wb') as f:
-        d = read_measurements(sock)
-        #Time with seconds to two decimal points
-        now = dt.now().strftime(r"%H:%M:%S.%f")[:-4]
-        pickle.dump({now : d}, f)
-        time.sleep(interval)
-            
+        while True:
+            d = read_measurements(sock)
+            #Time with seconds to two decimal points
+            now = dt.now().strftime(r"%H:%M:%S.%f")[:-4] 
+            pickle.dump({now : d}, f)
+            if STOP_COLLECTING : break
+            time.sleep(interval)
+
     sock.close()
 
-def wait_until_ready(value, SOCKET, msg=None,) -> None:
-        if msg is None:
-            msg = f"Listening for value : {value}"
-        print(msg)
+def wait_until_ready(value, SOCKET) -> None:
         finished = False
         while finished is False:
                 try:
@@ -112,18 +104,17 @@ def wait_until_ready(value, SOCKET, msg=None,) -> None:
                     else:
                         time.sleep(3)
 
-if __name__ == "__main__":
-    
-    interval = 0.2
-    process = threading.Thread(target=collect, args=[interval],)
-    process.start()
-    wait_until_ready(STOP_POWER_COLLECTION, SOCKET)
-    STOP_COLLECTING = True
-    print("\nSTOPPING COLLECTION OF POWER DATA\n")
-    process.join()
-    print("POWER COLLECTION STOPPED...EXITING")
+CONTEXT = zmq.Context()
+SOCKET = CONTEXT.socket(zmq.SUB)
+SOCKET.connect(f"tcp://{AGGREGATOR_ZMQ_PORT}")
+SOCKET.setsockopt(zmq.SUBSCRIBE, b'')
 
-
+interval = 0.2
+process = threading.Thread(target=collect, args=[interval],)
+process.start()
+wait_until_ready(STOP_POWER_COLLECTION, SOCKET)
+STOP_COLLECTING = True
+process.join()
 
 '''
 https://sigrok.org/wiki/RDTech_UM24C
