@@ -1,6 +1,7 @@
 import sqlite3
 import pathlib
 from common import adapt_and_convert
+from common import Experiment
 class Aggregator:
     
     def __init__(self, ip: str, username: str, flwrPort: int, zmqPort: int) -> None:
@@ -34,7 +35,7 @@ class Aggregator:
         con.close()
         
     @classmethod
-    def get_completed_experiments(self):
+    def get_completed_experiments(self) -> list[Experiment]:
         
         con = sqlite3.connect(r"Outputs/Experiments/log.db", detect_types=sqlite3.PARSE_DECLTYPES)
         cur = con.cursor()
@@ -52,7 +53,7 @@ class Aggregator:
         return list_of_experiments
     
     @classmethod
-    def get_incomplete_experiments(self):
+    def get_incomplete_experiments(self) -> list[Experiment]:
         
         con = sqlite3.connect(r"Outputs/Experiments/log.db", detect_types=sqlite3.PARSE_DECLTYPES)
         cur = con.cursor()
@@ -70,7 +71,7 @@ class Aggregator:
         return list_of_experiments
 
     @classmethod
-    def get_experiments(self):
+    def get_experiments(self) -> list[Experiment]:
         
         con = sqlite3.connect(r"Outputs/Experiments/log.db", detect_types=sqlite3.PARSE_DECLTYPES)
         cur = con.cursor()
@@ -88,7 +89,7 @@ class Aggregator:
         return list_of_experiments
 
     @classmethod
-    def get_running_experiments(self):
+    def get_running_experiments(self) -> list[Experiment]:
         
         con = sqlite3.connect(r"Outputs/Experiments/log.db", detect_types=sqlite3.PARSE_DECLTYPES)
         cur = con.cursor()
@@ -106,7 +107,7 @@ class Aggregator:
         return list_of_experiments
     
     @classmethod
-    def get_failed_experiments(self):
+    def get_failed_experiments(self) -> list[Experiment]:
         
         con = sqlite3.connect(r"Outputs/Experiments/log.db", detect_types=sqlite3.PARSE_DECLTYPES)
         cur = con.cursor()
@@ -123,3 +124,15 @@ class Aggregator:
         
         return list_of_experiments
     
+    @classmethod
+    def nuke_experiments(self):
+        con = sqlite3.connect(r"Outputs/Experiments/log.db", detect_types=sqlite3.PARSE_DECLTYPES)
+        cur = con.cursor()
+        
+        adapt_and_convert()
+        
+        cur.execute(r"""DELETE FROM log""")
+        
+        con.commit()
+        cur.close()
+        con.close()

@@ -3,6 +3,10 @@
 # * Stuff like the IPs of the devices, ZMQ Ports and Which device is collecting power for which other device etc is here
 
 import flwr as fl
+from common.Experiments import valid_datasets as VALID_DATASETS
+from common.Experiments import valid_fusions as VALID_FUSION_ALGOS
+from common.Experiments import Experiment
+FUSION_ALGOS_TRANSLATOR = Experiment.fusion_translator
 
 IP_CLIENTS = {
     "rpi1": "10.8.1.38",
@@ -31,17 +35,3 @@ POWER_COLLECTOR_CONNECTED_DEVICE = {
     "pi3": "rpi3",
 }
 
-VALID_DATASETS = {"mnist", "cifar10"}
-VALID_FUSION_ALGOS = {
-    "FedAvg",
-    "FedProx",
-    "FedAdagrad",
-    "FedXgbNnAvg",
-}
-
-FUSION_ALGOS_TRANSLATOR = {
-    "FedAvg": fl.server.strategy.FedAvg,
-    "FedProx": fl.server.strategy.FedProx,
-    "FedAdagrad": fl.server.strategy.FedAdagrad,
-    "FedXgbNnAvg": fl.server.strategy.FedXgbNnAvg,
-}

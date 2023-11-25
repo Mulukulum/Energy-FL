@@ -102,6 +102,21 @@ class Experiment:
             self.run
         )))
 
+    def __repr__(self) -> str:
+        return f"""
+    Version : {self.version}
+    Model : {self.model}
+    Fusion : {self.fusion}
+    Dataset : {self.dataset}
+    Batch-Size : {self.batch_size}
+    Rounds : {self.rounds}
+    Epochs : {self.epochs}
+    Sample-Fraction : {self.sample_fraction}
+    Proximal-Mu : {self.proximal_mu}
+    Number of Parties : {self.num_participating_parties}
+    Run Number : {self.run}
+        """
+
     def check_validity(self):
         if self.model not in valid_models:
             raise ValueError(f"{self.model} is not a valid model")
