@@ -122,7 +122,7 @@ class Experiment:
             raise ValueError(f"{self.model} is not a valid model")
         if self.fusion not in valid_fusions:
             raise ValueError(f"{self.fusion} is not a valid fusion")
-        if self.dataset not in valid_models:
+        if self.dataset not in valid_datasets:
             raise ValueError(f"{self.dataset} is not a valid dataset")
         if not (0.0 <= self.sample_fraction <= 1.0):
             raise ValueError(f"{self.sample_fraction} is not a valid sample-fraction")

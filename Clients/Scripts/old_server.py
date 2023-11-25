@@ -3,6 +3,7 @@ from flwr.common import Metrics
 import common.Configuration as Configuration
 import flwr as fl
 
+rounds = -1
 
 def weighted_average(metrics: List[Tuple[int, Metrics]]) -> Metrics:
     """Thist function averages the `accuracy` metric sent by the clients in a `evaluate`
@@ -59,6 +60,7 @@ def main(args: dict = None):
     ```
     """
     
+    global rounds
     min_num_clients = len(Configuration.IP_CLIENTS)
     
     if args is not None:
