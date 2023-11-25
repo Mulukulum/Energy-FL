@@ -1,9 +1,8 @@
 
 import flwr as fl
-import numpy as np
 import tensorflow as tf
 from tensorflow import keras
-import getpass
+
 
 
 class DaSHFlowerClient(fl.client.NumPyClient):
@@ -79,6 +78,8 @@ class DaSHFlowerClient(fl.client.NumPyClient):
         return self.get_parameters({}), len(self.x_train), {}
 
     def evaluate(self, parameters, config):
+        import getpass
+        import numpy as np
         
         PI_NAME = getpass.getuser()
         self.set_parameters(parameters)
