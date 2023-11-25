@@ -1,9 +1,10 @@
 # Energy-FL
 
-### Make sure that libbluetooth-dev is installed
+### Make sure that the following packages are installed 
 
 ```
 sudo apt install libbluetooth-dev
+sudo apt install expect
 ```
 
 Create a virtual environment
