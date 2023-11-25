@@ -26,7 +26,7 @@ EOF
         """
         return subprocess.run(cmd_string, shell=True, capture_output=True)
     
-    def Popen(self, cmds : list) -> None :
+    def Popen(self, cmds : list) -> subprocess.Popen :
         """
         Provide a list with commands terminated by a semicolon, each command is run one after the other on a bash instance on the 
         client machine with the energy-FL folder as the present working directory, with the venv activated, 
