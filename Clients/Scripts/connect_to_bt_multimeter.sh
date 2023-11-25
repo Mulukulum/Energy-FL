@@ -1,10 +1,5 @@
 #!/usr/bin/expect -f
 
-if {$argc != 2} {
-    puts "No arguments."
-    exit 1
-}
-
 # Script taken from https://gist.github.com/RamonGilabert/046727b302b4d9fb0055?permalink_comment_id=3939675#gistcomment-3939675
 
 # First argument needs to be the device MAC address;
