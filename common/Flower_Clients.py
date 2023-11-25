@@ -9,9 +9,10 @@ class DaSHFlowerClient(fl.client.NumPyClient):
     """A FlowerClient that uses MobileNetV3 for CIFAR-10 or a much smaller CNN for
     MNIST. Ideally this client should never be used"""
 
-    def __init__(self, trainset, valset, use_mnist: bool):
+    def __init__(self, trainset, valset, use_mnist: bool, name : str):
         self.x_train, self.y_train = trainset
         self.x_val, self.y_val = valset
+        self.name = name
         # Instantiate model
         if use_mnist:
             # small model for MNIST
@@ -78,10 +79,8 @@ class DaSHFlowerClient(fl.client.NumPyClient):
         return self.get_parameters({}), len(self.x_train), {}
 
     def evaluate(self, parameters, config):
-        import getpass
         import numpy as np
         
-        PI_NAME = getpass.getuser()
         self.set_parameters(parameters)
         (
             loss,
@@ -113,7 +112,7 @@ class DaSHFlowerClient(fl.client.NumPyClient):
                 recall_score(self.y_val, y_pred, average=avg, zero_division=0), 3
             )
             
-        with open(f'Outputs/Evaluations/{PI_NAME}{config.get("synced", "")}.txt', "w") as f:
+        with open(f'Outputs/Evaluations/{self.name}{config.get("synced", "")}.txt', "w") as f:
             f.write(str(metrics_dictionary))
 
         return loss, len(self.x_val), metrics_dictionary

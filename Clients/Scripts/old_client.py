@@ -106,7 +106,7 @@ def main():
     # Start Flower client setting its associated data partition
     fl.client.start_numpy_client(
         server_address=server_address,
-        client=DaSHFlowerClient(trainset=trainset, valset=valset, use_mnist=use_mnist),
+        client=DaSHFlowerClient(trainset=trainset, valset=valset, use_mnist=use_mnist, name = PI_NAME),
     )
 
     # Epoch Logs made prettier
