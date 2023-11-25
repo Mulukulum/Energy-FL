@@ -2,6 +2,7 @@ import sqlite3
 import pathlib
 from common import adapt_and_convert
 from common import Experiment
+
 class Aggregator:
     
     def __init__(self, ip: str, username: str, flwrPort: int, zmqPort: int) -> None:
@@ -10,6 +11,7 @@ class Aggregator:
         self.flwrPort = flwrPort
         self.zmqPort = zmqPort
         self.create_experiment_log()
+        
         
 
     def __repr__(self) -> str:
@@ -136,3 +138,13 @@ class Aggregator:
         con.commit()
         cur.close()
         con.close()
+
+    def setupZMQ(self):
+        import zmq
+        self.context = zmq.Context()
+        self.broadcast = self.context.socket(zmq.PUB)
+        self.broadcast.bind(f"tcp://{self.ip}:{self.zmqPort}")
+        
+    def zmqSend(self):
+        from common import Configuration
+        self.broadcast.send_pyobj(Configuration.ZMQ_STOP_POWER_COLLECTION)
