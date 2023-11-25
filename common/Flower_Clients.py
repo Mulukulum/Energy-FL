@@ -3,7 +3,7 @@ import flwr as fl
 import numpy as np
 import tensorflow as tf
 from tensorflow import keras
-from common.Epoch_Logger import TimeHistory
+import getpass
 
 
 class DaSHFlowerClient(fl.client.NumPyClient):
@@ -67,7 +67,7 @@ class DaSHFlowerClient(fl.client.NumPyClient):
         # Logs Epoch Times
         start_times = epoch_time_logger.start_times
         end_times = epoch_time_logger.end_times
-        with open("Outputs/epoch_logs.csv", "a", newline="") as f:
+        with open("Outputs/Experiments/epoch_logs.csv", "a", newline="") as f:
             writer = csv.writer(f)
             for index, (start_time, end_time) in enumerate(zip(start_times, end_times)):
                 format = (
@@ -79,7 +79,8 @@ class DaSHFlowerClient(fl.client.NumPyClient):
         return self.get_parameters({}), len(self.x_train), {}
 
     def evaluate(self, parameters, config):
-        global PI_NAME
+        
+        PI_NAME = getpass.getuser()
         self.set_parameters(parameters)
         (
             loss,
@@ -110,10 +111,8 @@ class DaSHFlowerClient(fl.client.NumPyClient):
             metrics_dictionary["recall " + avg] = round(
                 recall_score(self.y_val, y_pred, average=avg, zero_division=0), 3
             )
-
-        with open(
-            f'Outputs/Evaluations/{PI_NAME}{config.get("synced", "")}.txt', "w"
-        ) as f:
+            
+        with open(f'Outputs/Evaluations/{PI_NAME}{config.get("synced", "")}.txt', "w") as f:
             f.write(str(metrics_dictionary))
 
         return loss, len(self.x_val), metrics_dictionary
