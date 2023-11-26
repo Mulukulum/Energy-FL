@@ -5,7 +5,7 @@ run_finished_experiments = False  # Change to True to re-run everything
 import subprocess
 from common import generate_all_experiments
 from common import Experiment
-from clients import database, Party, PowerCollector
+from clients import Aggregator, Party, PowerCollector
 from common import configuration
 from common.database import get_completed_experiments
 import time
@@ -29,7 +29,7 @@ def run_experiment(expt: Experiment):
 
     # Setup all the clients, aggregators and power collectors
 
-    aggregator: database = database(
+    aggregator: Aggregator = Aggregator(
         ip=configuration.IP_AGGREGATOR,
         username=configuration.AGGREGATOR_USERNAME,
         flwrPort=configuration.AGGREGATOR_FLOWER_SERVER_PORT,
@@ -71,6 +71,7 @@ def run_experiment(expt: Experiment):
 
     # Ready to start the experiment
 
+    aggregator.ZMQ_setup()
     # Start the Power Collections, SAR and then finally start the parties and the server
 
     for collector in bluetooth_collectors:
@@ -105,6 +106,7 @@ def run_experiment(expt: Experiment):
 
     sar_process.communicate(b"\n")
     aggregator.ZMQ_stop_power_collection()
+    aggregator.ZMQ_shutdown()
 
     #! Done!
 
