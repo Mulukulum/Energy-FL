@@ -10,9 +10,7 @@ class Aggregator:
         self.username = username
         self.flwrPort = flwrPort
         self.zmqPort = zmqPort
-        self.create_experiment_log()
-        
-        
+        self.create_experiment_log()        
 
     def __repr__(self) -> str:
         return f"""Aggregator {self.username}@{self.ip} hosting flwr on {self.flwrPort} and broadcasting on {self.zmqPort}"""
@@ -139,12 +137,12 @@ class Aggregator:
         cur.close()
         con.close()
 
-    def setupZMQ(self):
+    def ZMQ_setup(self):
         import zmq
         self.context = zmq.Context()
         self.broadcast = self.context.socket(zmq.PUB)
         self.broadcast.bind(f"tcp://{self.ip}:{self.zmqPort}")
         
-    def ZMQStopPowerCollection(self):
+    def ZMQ_stop_power_collection(self):
         from common import configuration
         self.broadcast.send_pyobj(configuration.ZMQ_STOP_POWER_COLLECTION)

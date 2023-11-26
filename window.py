@@ -1,4 +1,3 @@
-
 #! This file exists so you can SSH into the aggregator and see what exactly is going on
 
 from clients import Aggregator
@@ -25,20 +24,19 @@ Enter only the number
 """
 
 while True:
-    
     print(OPT_STRING)
     a = input()
-    
-    try : 
+
+    try:
         a = int(a)
-    except : 
+    except:
         print("Invalid option entered")
-        continue    
-    
-    if a > 9 :
+        continue
+
+    if a > 9:
         print("Invalid Option")
         continue
-    
+
     if a == 1:
         expt = Aggregator.get_running_experiments()
         for i in expt:
@@ -93,8 +91,10 @@ while True:
             print("No Results")
 
     if a == 8:
-        sanity_check = input("Nuking Experiment log can screw up the whole setup if something is running. Type 'Yes' or 'yes' to delete")
-        if sanity_check not in ('Yes', 'yes'):
+        sanity_check = input(
+            "Nuking Experiment log can screw up the whole setup if something is running. Type 'Yes' or 'yes' to delete"
+        )
+        if sanity_check not in ("Yes", "yes"):
             print("Log remains untouched")
             continue
         else:
@@ -102,19 +102,3 @@ while True:
             print("Nuked")
     if a == 9:
         break
-    
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
