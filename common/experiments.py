@@ -8,20 +8,29 @@ import flwr as fl
 
 __version__ = "v0.1"
 
-valid_fusions = ["FedAvg", "FedProx"]
+valid_fusions = [
+    "FedAvg",
+    "FedProx",
+]
+
 valid_models = [
     "tf-cnn",
 ]
-valid_datasets = ["cifar10", "mnist"]
+
+valid_datasets = [
+    "cifar10",
+    "mnist",
+]
 
 # Initializing params that are not required for every experiment
 
 valid_proximal_mu: list[float] = [1.0]
 
 fusion_translator = {
-        "FedAvg": fl.server.strategy.FedAvg,
-        "FedProx": fl.server.strategy.FedProx,
-    }
+    "FedAvg": fl.server.strategy.FedAvg,
+    "FedProx": fl.server.strategy.FedProx,
+}
+
 
 class Experiment:
     # * this entire class should probably be a dataclass but I decided to write it manually since i'm not familiar with dataclasses
@@ -37,8 +46,8 @@ class Experiment:
         proximal_mu: float = 0,
         sample_fraction: float = 1.0,
         version: str = __version__,
-        num_parties : int | None = None,
-        run : int = None
+        num_parties: int | None = None,
+        run: int = None,
     ) -> None:
         self.model = model
         self.fusion = fusion
@@ -55,7 +64,7 @@ class Experiment:
         self.folder_name = f"{self.version};{self.model};{self.fusion};{self.dataset};{self.batch_size};{self.rounds};{self.epochs};{self.sample_fraction};{self.proximal_mu};{self.num_participating_parties};{self.run}"
 
     def __eq__(self, __value) -> bool:
-        if self.__class__ is not __value.__class__ :
+        if self.__class__ is not __value.__class__:
             return False
         if (
             self.model,
@@ -68,39 +77,46 @@ class Experiment:
             self.proximal_mu,
             self.version,
             self.num_participating_parties,
-            self.run
-        ) != (__value.model,
-         __value.fusion,
-         __value.dataset,
-         __value.batch_size,
-         __value.rounds,
-         __value.epochs,
-         __value.sample_fraction,
-         __value.proximal_mu,
-         __value.version,
-         __value.num_participating_parties,
-         __value.run): return False
-        
+            self.run,
+        ) != (
+            __value.model,
+            __value.fusion,
+            __value.dataset,
+            __value.batch_size,
+            __value.rounds,
+            __value.epochs,
+            __value.sample_fraction,
+            __value.proximal_mu,
+            __value.version,
+            __value.num_participating_parties,
+            __value.run,
+        ):
+            return False
+
         return True
-    
+
     def __ne__(self, __value: object) -> bool:
-        return not (self == __value )
-    
+        return not (self == __value)
+
     def __hash__(self) -> int:
-        return hash(((
-            self.__class__,
-            self.model,
-            self.fusion,
-            self.dataset,
-            self.batch_size,
-            self.rounds,
-            self.epochs,
-            self.sample_fraction,
-            self.proximal_mu,
-            self.version,
-            self.num_participating_parties,
-            self.run
-        )))
+        return hash(
+            (
+                (
+                    self.__class__,
+                    self.model,
+                    self.fusion,
+                    self.dataset,
+                    self.batch_size,
+                    self.rounds,
+                    self.epochs,
+                    self.sample_fraction,
+                    self.proximal_mu,
+                    self.version,
+                    self.num_participating_parties,
+                    self.run,
+                )
+            )
+        )
 
     def __repr__(self) -> str:
         return f"""
@@ -129,37 +145,31 @@ class Experiment:
         if not (0 <= self.proximal_mu):
             raise ValueError(f"{self.proximal_mu} is not a valid proximal-mu")
 
-def generate_all_experiments(rounds_and_epochs : list[tuple[int, int]], 
-                             batch_sizes : list[int],
-                             runs : int,
-                             num_parties : int,
-                             ) -> list[Experiment]:
+
+def generate_all_experiments(
+    rounds_and_epochs: list[tuple[int, int]],
+    batch_sizes: list[int],
+    runs: int,
+    num_parties: int,
+) -> list[Experiment]:
     all_experiments = []
-    for dataset in valid_datasets :
-        for model in valid_models :
-            for fusion in valid_fusions :
-                for rounds, epochs in rounds_and_epochs :
+    for dataset in valid_datasets:
+        for model in valid_models:
+            for fusion in valid_fusions:
+                for rounds, epochs in rounds_and_epochs:
                     for batch_size in batch_sizes:
-                        for run in range(1, runs+1):
-                            
-                            expt = Experiment(model = model,
-                                       fusion=fusion,
-                                       dataset=dataset,
-                                       batch_size=batch_size,
-                                       rounds=rounds,
-                                       epochs=epochs,
-                                       num_parties=num_parties,
-                                       run = run
-                                       )
-                            
+                        for run in range(1, runs + 1):
+                            expt = Experiment(
+                                model=model,
+                                fusion=fusion,
+                                dataset=dataset,
+                                batch_size=batch_size,
+                                rounds=rounds,
+                                epochs=epochs,
+                                num_parties=num_parties,
+                                run=run,
+                            )
+
                             all_experiments.append(expt)
-    
-    return all_experiments            
-    
-    
-    
-    
-    
-    
-    
-    
+
+    return all_experiments

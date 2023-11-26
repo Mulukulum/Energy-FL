@@ -1,6 +1,8 @@
 import sqlite3
 import datetime
+import pathlib
 
+from .experiments import Experiment
 
 def adapt_and_convert():
     """
@@ -13,8 +15,6 @@ def adapt_and_convert():
     https://docs.python.org/3/library/sqlite3.html#how-to-write-adaptable-objects
     ```
     """
-    
-    from common.experiments import Experiment
     
     def adapt_datetime_iso(val):
             """Adapt datetime.datetime to timezone-naive ISO 8601 date."""
@@ -48,3 +48,118 @@ def adapt_and_convert():
         return bool(val)
     
     sqlite3.register_converter("bool", convert_bool)
+    
+    
+def create_experiment_log(self) -> None:
+    #! This assumes that the current working directory is always the ~/Energy-FL/ so that is important to keep in mind
+    
+    if pathlib.Path.exists(r"Outputs/Experiments/log.db"):
+        return
+    
+    con = sqlite3.connect(r"Outputs/Experiments/log.db", detect_types=sqlite3.PARSE_DECLTYPES)
+    cur = con.cursor()
+    
+    adapt_and_convert()
+    
+    cur.execute(f"""CREATE TABLE versions(version_no TEXT PRIMARY KEY, creation_time datetime NOT NULL)""")
+    cur.execute(f"""CREATE TABLE log(expt_id INTEGER PRIMARY KEY, expt experiment NOT NULL, is_finished bool NOT NULL, is_running bool NOT NULL, has_failed bool NOT NULL)""")
+    
+    con.commit()
+    cur.close()
+    con.close()
+    
+def get_completed_experiments(self) -> list[Experiment]:
+    
+    con = sqlite3.connect(r"Outputs/Experiments/log.db", detect_types=sqlite3.PARSE_DECLTYPES)
+    cur = con.cursor()
+    
+    adapt_and_convert()
+    
+    res = cur.execute(r"""SELECT expt FROM log WHERE is_finished=1 ;""")
+    res = res.fetchall()
+    list_of_experiments = [expt[0] for expt in res]
+    
+    con.commit()
+    cur.close()
+    con.close()
+    
+    return list_of_experiments
+
+def get_incomplete_experiments(self) -> list[Experiment]:
+    
+    con = sqlite3.connect(r"Outputs/Experiments/log.db", detect_types=sqlite3.PARSE_DECLTYPES)
+    cur = con.cursor()
+    
+    adapt_and_convert()
+    
+    res = cur.execute(r"""SELECT expt FROM log WHERE is_finished=0 ;""")
+    res = res.fetchall()
+    list_of_experiments = [expt[0] for expt in res]
+    
+    con.commit()
+    cur.close()
+    con.close()
+    
+    return list_of_experiments
+def get_experiments(self) -> list[Experiment]:
+    
+    con = sqlite3.connect(r"Outputs/Experiments/log.db", detect_types=sqlite3.PARSE_DECLTYPES)
+    cur = con.cursor()
+    
+    adapt_and_convert()
+    
+    res = cur.execute(r"""SELECT expt FROM log ;""")
+    res = res.fetchall()
+    list_of_experiments = [expt[0] for expt in res]
+    
+    con.commit()
+    cur.close()
+    con.close()
+    
+    return list_of_experiments
+def get_running_experiments(self) -> list[Experiment]:
+    
+    con = sqlite3.connect(r"Outputs/Experiments/log.db", detect_types=sqlite3.PARSE_DECLTYPES)
+    cur = con.cursor()
+    
+    adapt_and_convert()
+    
+    res = cur.execute(r"""SELECT expt FROM log WHERE is_running=1""")
+    res = res.fetchall()
+    list_of_experiments = [expt[0] for expt in res]
+    
+    con.commit()
+    cur.close()
+    con.close()
+    
+    return list_of_experiments
+
+def get_failed_experiments(self) -> list[Experiment]:
+    
+    con = sqlite3.connect(r"Outputs/Experiments/log.db", detect_types=sqlite3.PARSE_DECLTYPES)
+    cur = con.cursor()
+    
+    adapt_and_convert()
+    
+    res = cur.execute(r"""SELECT expt FROM log WHERE has_failed=1""")
+    res = res.fetchall()
+    list_of_experiments = [expt[0] for expt in res]
+    
+    con.commit()
+    cur.close()
+    con.close()
+    
+    return list_of_experiments
+
+
+def nuke_experiments(self):
+    con = sqlite3.connect(r"Outputs/Experiments/log.db", detect_types=sqlite3.PARSE_DECLTYPES)
+    cur = con.cursor()
+    
+    adapt_and_convert()
+    
+    cur.execute(r"""DELETE FROM log""")
+    
+    con.commit()
+    cur.close()
+    con.close()

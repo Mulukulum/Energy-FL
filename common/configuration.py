@@ -2,13 +2,14 @@
 
 # * Stuff like the IPs of the devices, ZMQ Ports and Which device is collecting power for which other device etc is here
 
-import flwr as fl
-from common.experiments import valid_datasets as VALID_DATASETS
-from common.experiments import valid_fusions as VALID_FUSION_ALGOS
-from common.experiments import Experiment
 import getpass
+from .experiments import valid_datasets as VALID_DATASETS
+from .experiments import valid_fusions as VALID_FUSION_ALGOS
+from .experiments import fusion_translator
+from .experiments import Experiment
 
-FUSION_ALGOS_TRANSLATOR = Experiment.fusion_translator
+
+FUSION_ALGOS_TRANSLATOR = fusion_translator
 
 IP_CLIENTS = {
     "rpi1": "10.8.1.38",
