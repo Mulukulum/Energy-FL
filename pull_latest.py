@@ -1,4 +1,5 @@
 import subprocess
+import time
 
 USERNAMES_AND_IPS={
     "pi3" : "10.8.1.200",
@@ -9,10 +10,14 @@ USERNAMES_AND_IPS={
 }
 
 def main():
+    
+    print("\n\nCurrent User\n\n")
+    time.sleep(1)
     subprocess.run('git pull' , shell=True)
     
     for username, ip in USERNAMES_AND_IPS.items():
-        print(f"{username}@{ip}\n\n")
+        print(f"\n\n{username}@{ip}\n\n")
+        time.sleep(1)
         subprocess.run(f"ssh {username}@{ip} << EOF \n cd ~/Energy-FL ; git pull ; exit ; \nEOF", shell=True)    
 
 if __name__=="__main__":
