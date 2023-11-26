@@ -1,6 +1,6 @@
 from typing import List, Tuple
 from flwr.common import Metrics
-import common.configuration as Configuration
+from common import configuration as config
 import flwr as fl
 
 rounds = -1
@@ -61,7 +61,7 @@ def main(args: dict = None):
     """
     
     global rounds
-    min_num_clients = len(Configuration.IP_CLIENTS)
+    min_num_clients = len(config.IP_CLIENTS)
     
     if args is not None:
         rounds = args['rounds']
@@ -82,16 +82,16 @@ def main(args: dict = None):
       {rounds=}
       {epochs=}
       {dataset=}
-      num_parties={len(Configuration.IP_CLIENTS)}
+      num_parties={len(config.IP_CLIENTS)}
       {batch_size=}
       {fusion=}
       {model=}
       """
     )
-    fusion = Configuration.FUSION_ALGOS_TRANSLATOR[fusion]
+    fusion = config.FUSION_ALGOS_TRANSLATOR[fusion]
     # Define strategy
     
-    if fusion == Configuration.FUSION_ALGOS_TRANSLATOR['FedProx']:
+    if fusion == config.FUSION_ALGOS_TRANSLATOR['FedProx']:
         strategy = fusion(
         fraction_fit=sample_fraction,
         fraction_evaluate=sample_fraction,
@@ -113,7 +113,7 @@ def main(args: dict = None):
             on_evaluate_config_fn=evaluate_config,
         ) 
 
-    server_address = str(Configuration.IP_AGGREGATOR) + ":" + str(Configuration.AGGREGATOR_FLOWER_SERVER_PORT)
+    server_address = str(config.IP_AGGREGATOR) + ":" + str(config.AGGREGATOR_FLOWER_SERVER_PORT)
 
     fl.server.start_server(
         server_address=server_address,

@@ -6,7 +6,7 @@ import subprocess
 from common import generate_all_experiments
 from common import Experiment
 from clients import Aggregator, Party, PowerCollector
-import common.configuration as configuration
+from common import configuration
 import time
 
 batch_sizes = [16, 512]

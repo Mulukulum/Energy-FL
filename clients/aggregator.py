@@ -1,6 +1,6 @@
 import sqlite3
 import pathlib
-from common.database import adapt_and_convert
+from common import adapt_and_convert
 from common import Experiment
 
 class Aggregator:

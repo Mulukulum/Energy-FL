@@ -1,7 +1,7 @@
 #! This file exists so you can SSH into the aggregator and see what exactly is going on
 
 from clients import Aggregator
-from common.database import adapt_and_convert
+from common import adapt_and_convert
 
 Aggregator.create_experiment_log()
 
