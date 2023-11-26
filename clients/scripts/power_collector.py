@@ -55,11 +55,11 @@ def read_data(sock):
 def set_initial_parameters(sock):
     sock.send(bytes([SET_DATA_GROUP_FIVE]))
     time.sleep(5)
-    sock.send(bytes([CLEAR_DATA_GROUP]))
+    sock.send(bytes([SET_SCREENSAVER]))
     time.sleep(3)
     sock.send(bytes([DIM_SCREEN]))
     time.sleep(2)
-    sock.send(bytes([SET_SCREENSAVER]))
+    sock.send(bytes([CLEAR_DATA_GROUP]))
 
 
 def read_measurements(sock):
