@@ -62,7 +62,7 @@ def run_experiment(expt: Experiment):
     all_ips = configuration.IP_CLIENTS.copy()
     all_ips.update({configuration.AGGREGATOR_USERNAME: configuration.IP_AGGREGATOR})
     sar.initialize_sar(usernames_ips=all_ips)
-    subprocess.run(["chmod u+x Clients/Scripts/sar_collector.sh"], shell=True)
+    subprocess.run(["chmod u+x clients/scripts/sar_collector.sh"], shell=True)
 
     # Setup Bluetooth
     for collector in bluetooth_collectors:
@@ -76,7 +76,7 @@ def run_experiment(expt: Experiment):
         collector.collect_power_data()
 
     sar_process = subprocess.Popen(
-        ["./Clients/Scripts/sar_collector.sh"], shell=True, stdin=subprocess.PIPE
+        ["./clients/scripts/sar_collector.sh"], shell=True, stdin=subprocess.PIPE
     )
 
     for cid, party in enumerate(parties):

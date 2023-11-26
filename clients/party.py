@@ -4,7 +4,7 @@ import pathlib
 
 
 class sshRunner:
-    """Use this class primarily to run scripts in the Clients/Scripts/ folder"""
+    """Use this class primarily to run scripts in the clients/scripts/ folder"""
 
     def __init__(self, ssh_details: str) -> None:
         self.client = ssh_details
@@ -106,6 +106,6 @@ if [ -d Outputs/Experiments/{exp.folder_name} ]; then echo 'exists' ; fi ;
     ):
         self.ssh.Popen(
             [
-                f"python Clients/Scripts/old_client.py --agg_ip {agg_ip} --agg_port {agg_port} --cid {cid} --dataset {dataset} --client_ip {self.ip} --num_parties {num_parties} --pi_name {self.username} "
+                f"python clients/scripts/old_client.py --agg_ip {agg_ip} --agg_port {agg_port} --cid {cid} --dataset {dataset} --client_ip {self.ip} --num_parties {num_parties} --pi_name {self.username} "
             ]
         )

@@ -13,8 +13,8 @@ class PowerCollector:
         self.experiment_name = f"{experiment.folder_name}_{self.party.username}"
         
     def pair_to_tester(self):
-        return self.ssh.run([f"./Clients/Scripts/connect_to_bt_multimeter.sh {self.tester_address} ;"])
+        return self.ssh.run([f"./clients/scripts/connect_to_bt_multimeter.sh {self.tester_address} ;"])
     
     def collect_power_data(self, agg_ip : str):
-        self.ssh.Popen([f"""python /Clients/Scripts/power_collector.py --filename "{self.experiment_name}" --zmq_ip {agg_ip}:{self.broadcast_port} --address {self.tester_address} ;"""])
+        self.ssh.Popen([f"""python clients/scripts/power_collector.py --filename "{self.experiment_name}" --zmq_ip {agg_ip}:{self.broadcast_port} --address {self.tester_address} ;"""])
 

@@ -134,7 +134,7 @@ usernames={users}
     
 """
     
-    with open('Clients/Scripts/sar_collector.sh', 'w') as f:
+    with open('clients/scripts/sar_collector.sh', 'w') as f:
         f.write(sar_header)
         f.write(sar_values)
         f.write(sar_footer)
