@@ -78,7 +78,7 @@ def run_experiment(expt: Experiment):
     # Start the Power Collections, SAR and then finally start the parties and the server
 
     for collector in bluetooth_collectors:
-        collector.collect_power_data()
+        collector.collect_power_data(agg_ip=configuration.IP_AGGREGATOR)
 
     sar_process = subprocess.Popen(
         ["./clients/scripts/sar_collector.sh"], shell=True, stdin=subprocess.PIPE
