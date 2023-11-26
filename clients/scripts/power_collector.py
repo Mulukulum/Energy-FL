@@ -88,10 +88,16 @@ def collect(
     filepath = f"Outputs/Power/{name}.pkl"
     sock = connect_to_usb_tester(UM25C_ADDRESS)
     set_initial_parameters(sock)
-
+    fail_count = 0
     with open(filepath, "wb") as f:
         while True:
-            d = read_measurements(sock)
+            try:
+                d = read_measurements(sock)
+            except bluetooth.BluetoothError:
+                time.sleep(0.2)
+                fail_count+=1
+                if fail_count == 10 : print("10 Failures reached")
+                continue
             # Time with seconds to two decimal points
             now = dt.now().strftime(r"%H:%M:%S.%f")[:-4]
             pickle.dump({now: d}, f)
