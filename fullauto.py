@@ -31,7 +31,7 @@ def run_experiment(expt: Experiment):
 
     aggregator: Aggregator = Aggregator(
         ip=configuration.IP_AGGREGATOR,
-        username=configuration.AGGREGATOR_USERNAME,
+        username=configuration.DEVICE_USERNAME,
         flwrPort=configuration.AGGREGATOR_FLOWER_SERVER_PORT,
         zmqPort=configuration.AGGREGATOR_ZMQ_BROADCAST_PORT,
     )
@@ -61,7 +61,7 @@ def run_experiment(expt: Experiment):
     from common import sar
 
     all_ips = configuration.IP_CLIENTS.copy()
-    all_ips.update({configuration.AGGREGATOR_USERNAME: configuration.IP_AGGREGATOR})
+    all_ips.update({configuration.DEVICE_USERNAME: configuration.IP_AGGREGATOR})
     sar.initialize_sar(usernames_ips=all_ips)
     subprocess.run(["chmod u+x clients/scripts/sar_collector.sh"], shell=True)
 

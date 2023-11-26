@@ -2,6 +2,7 @@
 
 # * Stuff like the IPs of the devices, ZMQ Ports and Which device is collecting power for which other device etc is here
 
+import logging
 import getpass
 from .experiments import valid_datasets as VALID_DATASETS
 from .experiments import valid_fusions as VALID_FUSION_ALGOS
@@ -18,7 +19,7 @@ IP_AGGREGATOR = "10.8.1.45"
 
 AGGREGATOR_FLOWER_SERVER_PORT = 7011
 
-AGGREGATOR_USERNAME = getpass.getuser()
+DEVICE_USERNAME = getpass.getuser()
 
 AGGREGATOR_ZMQ_BROADCAST_PORT = 6010
 
@@ -35,3 +36,5 @@ UM25C_ADDR_FOR_POWER_COLLECTORS = {
 POWER_COLLECTOR_CONNECTED_DEVICE = {
     "pi3": "rpi3",
 }
+
+LOGGING_LEVEL = logging.DEBUG
