@@ -107,14 +107,11 @@ def run_experiment(expt: Experiment):
 
     #! Done!
 
+
 completed_experiments = Aggregator.get_completed_experiments()
 
 for experiment in all_experiments:
-    
     if experiment not in completed_experiments:
         run_experiment(experiment)
     elif run_finished_experiments:
         run_experiment(experiment)
-
-    
-    
