@@ -107,25 +107,26 @@ echo "All SAR data files collected."
 
 #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-def initialize_sar(usernames_ips : dict) :
-    '''
-    Input a dictionary with the username of the machine and its ip that you want to collect SAR from
-    
-    Example : 
-    
-    ```
-    ips = {
-    "user": "10.8.1.45",
-    "rpi1": "10.8.1.38",
-    "rpi2": "10.8.1.43",
-    "rpi3": "10.8.1.192",
-    "rpi4": "10.8.1.41",
-}
-    ```
-    '''
-    ips = str(tuple(usernames_ips.values())).replace(',' , ' ').replace("'", '"')
-    users = str(tuple(usernames_ips.keys())).replace(',' , ' ').replace("'", '"')
-    
+
+def initialize_sar(usernames_ips: dict):
+    """
+        Input a dictionary with the username of the machine and its ip that you want to collect SAR from
+
+        Example :
+
+        ```
+        ips = {
+        "user": "10.8.1.45",
+        "rpi1": "10.8.1.38",
+        "rpi2": "10.8.1.43",
+        "rpi3": "10.8.1.192",
+        "rpi4": "10.8.1.41",
+    }
+        ```
+    """
+    ips = str(tuple(usernames_ips.values())).replace(",", " ").replace("'", '"')
+    users = str(tuple(usernames_ips.keys())).replace(",", " ").replace("'", '"')
+
     sar_values = f"""
     
 hosts={ips}
@@ -133,10 +134,11 @@ hosts={ips}
 usernames={users}
     
 """
-    
-    with open('clients/scripts/sar_collector.sh', 'w') as f:
+
+    with open("clients/scripts/sar_collector.sh", "w") as f:
         f.write(sar_header)
         f.write(sar_values)
         f.write(sar_footer)
-        
+
+
 #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
