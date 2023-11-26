@@ -18,7 +18,7 @@ import argparse
 
 parser = argparse.ArgumentParser()
 parser.add_argument(
-    "--zmq_ip", help="ZMQ Port that aggregator is broadcasting on", type=int
+    "--zmq_ip", help="ZMQ Port that aggregator is broadcasting on", type=str
 )
 parser.add_argument("--address", help="Address of the bluetooth multimeter", type=str)
 parser.add_argument("--filename", help="Filename of the pkl file", type=str)
