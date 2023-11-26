@@ -7,7 +7,7 @@ class PowerCollector:
         self,
         ip: str,
         username: str,
-        collection_party: Party,
+        collection_party_username: str,
         bluetooth_address: str,
         zmq_broadcast_port: int,
         experiment: Experiment,
@@ -15,10 +15,10 @@ class PowerCollector:
         self.ip = ip
         self.username = username
         self.ssh = sshRunner(f"{self.username}@{self.ip}")
-        self.party = collection_party
+        self.party_username = collection_party_username
         self.tester_address = bluetooth_address
         self.broadcast_port = zmq_broadcast_port
-        self.experiment_name = f"{experiment.folder_name}_{self.party.username}"
+        self.experiment_name = f"{experiment.folder_name}_{self.party_username}"
 
     def pair_to_tester(self):
         return self.ssh.run(
