@@ -4,6 +4,8 @@ from common import configuration as config
 import flwr as fl
 
 rounds = -1
+epochs = -1
+batch_size = -1
 
 
 def weighted_average(metrics: List[Tuple[int, Metrics]]) -> Metrics:
@@ -18,8 +20,9 @@ def weighted_average(metrics: List[Tuple[int, Metrics]]) -> Metrics:
     return {"accuracy": sum(accuracies) / sum(examples)}
 
 
-def fit_config(server_round: int, *, epochs: int, batch_size: int):
+def fit_config(server_round: int):
     """Return a configuration with static batch size and (local) epochs."""
+    global epochs, batch_size
     config = {
         "epochs": epochs if epochs else 4,  # Number of local epochs done by clients
         "batch_size": batch_size
@@ -60,7 +63,7 @@ def main(args: dict = None):
     ```
     """
 
-    global rounds
+    global rounds, epochs, run, dataset, batch_size, model
     min_num_clients = len(config.IP_CLIENTS)
 
     if args is not None:
