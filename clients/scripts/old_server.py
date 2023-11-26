@@ -74,20 +74,6 @@ def main(args: dict = None):
         sample_fraction = args["sample_fraction"]
         proximal_mu = args.get("proximal_mu", 1)
 
-    print("\n" * 3)
-
-    print(
-        f"""
-      {'' if run is None else f'{run=}'}
-      {rounds=}
-      {epochs=}
-      {dataset=}
-      num_parties={len(config.IP_CLIENTS)}
-      {batch_size=}
-      {fusion=}
-      {model=}
-      """
-    )
     fusion = config.FUSION_ALGOS_TRANSLATOR[fusion]
     # Define strategy
 

@@ -20,8 +20,11 @@ class PowerCollector:
         self.broadcast_port = zmq_broadcast_port
         self.experiment_name = f"{experiment.folder_name}_{self.party_username}"
 
+    def __repr__(self) -> str:
+        return f"{self.party_username}@{self.ip} using {self.tester_address} to log {self.party_username}"
+
     def pair_to_tester(self):
-        return self.ssh.run(
+        return self.ssh.Popen(
             [f"./clients/scripts/connect_to_bt_multimeter.sh {self.tester_address} ;"]
         )
 

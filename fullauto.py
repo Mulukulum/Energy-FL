@@ -10,6 +10,7 @@ from common import Experiment
 from clients import Aggregator, Party, PowerCollector
 from common import configuration
 from common.database import get_completed_experiments
+from common import energy_fl_logger
 
 batch_sizes = [16, 512]
 rounds_and_epochs = [(3, 4)]
@@ -25,7 +26,9 @@ all_experiments = generate_all_experiments(
 
 
 def run_experiment(expt: Experiment):
-    print(expt)
+    
+    energy_fl_logger.info(str(expt))
+
     time.sleep(3)
 
     # Setup all the clients, aggregators and power collectors
@@ -65,12 +68,14 @@ def run_experiment(expt: Experiment):
     all_ips = configuration.IP_CLIENTS.copy()
     all_ips.update({configuration.DEVICE_USERNAME: configuration.IP_AGGREGATOR})
 
+    energy_fl_logger.debug(f"SAR Initialized with {all_ips}")
     sar.initialize_sar(usernames_ips=all_ips)
     subprocess.run(["chmod u+x clients/scripts/sar_collector.sh"], shell=True)
 
     # Setup Bluetooth
     for collector in bluetooth_collectors:
-        collector.pair_to_tester()
+        collector.pair_to_tester().wait()
+        energy_fl_logger.info(str(collector) + "was paired to tester")
 
     # Ready to start the experiment
 
@@ -80,9 +85,14 @@ def run_experiment(expt: Experiment):
     for collector in bluetooth_collectors:
         collector.collect_power_data(agg_ip=configuration.IP_AGGREGATOR)
 
+    energy_fl_logger.info("Power Collection Started")
+
     sar_process = subprocess.Popen(
         ["./clients/scripts/sar_collector.sh"], shell=True, stdin=subprocess.PIPE
     )
+
+    energy_fl_logger.info("SAR Started. Waiting 5 seconds to start parties")
+    time.sleep(5)
 
     for cid, party in enumerate(parties):
         party.start_client_server(

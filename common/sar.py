@@ -1,11 +1,11 @@
-sar_header = """
+sar_header = r"""
 #!/bin/bash
 color='\033[1;31m' # set the color to bold red
 
 """
 #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-sar_footer = """
+sar_footer = r"""
 
 # Define the remote command to run SAR and collect data
 remote_cmd=$(cat << 'END_CMD'

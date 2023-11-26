@@ -47,8 +47,7 @@ class DaSHFlowerClient(fl.client.NumPyClient):
 
     def fit(self, parameters, config):
         from common.epoch_logger import TimeHistory
-
-        print("Client sampled for fit()")
+        fl.common.logger.logger.info("Client Sampled for fit()")
         self.set_parameters(parameters)
         # Set hyperparameters from config sent by server/strategy
         batch, epochs = config["batch_size"], config["epochs"]

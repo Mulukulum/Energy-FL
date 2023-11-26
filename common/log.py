@@ -13,4 +13,4 @@ logging.basicConfig(
 )
 
 energy_fl_logger = logging.getLogger(name="Energy-FL")
-energy_fl_logger.info("")
+energy_fl_logger.info("Logger Started!")
