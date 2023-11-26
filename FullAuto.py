@@ -3,7 +3,7 @@
 run_finished_experiments = False # Change to True to re-run everything
 
 import subprocess
-from common.Experiments import generate_all_experiments
+from common.experiments import generate_all_experiments
 from common import Experiment
 from Clients import Aggregator, Party, PowerCollector
 import common.Configuration as Configuration
