@@ -14,7 +14,7 @@ rounds_and_epochs = [(3, 4)]
 runs = 3
 num_parties = len(configuration.IP_CLIENTS)
 
-experiments = generate_all_experiments(
+all_experiments = generate_all_experiments(
     rounds_and_epochs=rounds_and_epochs,
     batch_sizes=batch_sizes,
     runs=runs,
@@ -106,3 +106,15 @@ def run_experiment(expt: Experiment):
     aggregator.ZMQ_stop_power_collection()
 
     #! Done!
+
+completed_experiments = Aggregator.get_completed_experiments()
+
+for experiment in all_experiments:
+    
+    if experiment not in completed_experiments:
+        run_experiment(experiment)
+    elif run_finished_experiments:
+        run_experiment(experiment)
+
+    
+    
