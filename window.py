@@ -1,9 +1,9 @@
 #! This file exists so you can SSH into the aggregator and see what exactly is going on
 
-from clients import Aggregator
 from common import adapt_and_convert
+from common import database
 
-Aggregator.create_experiment_log()
+database.create_experiment_log()
 
 adapt_and_convert()
 
@@ -38,24 +38,24 @@ while True:
         continue
 
     if a == 1:
-        expt = Aggregator.get_running_experiments()
+        expt = database.get_running_experiments()
         for i in expt:
             print(i)
     if a == 2:
-        expt = Aggregator.get_incomplete_experiments()
+        expt = database.get_incomplete_experiments()
         for i in expt:
             print(i)
     if a == 3:
-        expt = Aggregator.get_failed_experiments()
+        expt = database.get_failed_experiments()
         for i in expt:
             print(i)
     if a == 4:
-        expt = Aggregator.get_completed_experiments()
+        expt = database.get_completed_experiments()
         for i in expt:
             print(i)
     if a == 5:
         version = input("Enter version string with prefix. Example 'v1.5'")
-        expt = Aggregator.get_incomplete_experiments()
+        expt = database.get_incomplete_experiments()
         final = []
         for i in expt:
             if i.version == version:
@@ -67,7 +67,7 @@ while True:
             print("No Results")
     if a == 6:
         version = input("Enter version string with prefix. Example 'v1.5'")
-        expt = Aggregator.get_failed_experiments()
+        expt = database.get_failed_experiments()
         final = []
         for i in expt:
             if i.version == version:
@@ -79,7 +79,7 @@ while True:
             print("No Results")
     if a == 7:
         version = input("Enter version string with prefix. Example 'v1.5'")
-        expt = Aggregator.get_completed_experiments()
+        expt = database.get_completed_experiments()
         final = []
         for i in expt:
             if i.version == version:
@@ -98,7 +98,7 @@ while True:
             print("Log remains untouched")
             continue
         else:
-            Aggregator.nuke_experiments()
+            database.nuke_experiments()
             print("Nuked")
     if a == 9:
         break

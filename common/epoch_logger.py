@@ -6,7 +6,6 @@ from keras.callbacks import Callback
 
 
 class TimeHistory(Callback):
-    
     def on_train_begin(self, logs={}):
         self.start_times: list[str] = []
         self.end_times: list[str] = []

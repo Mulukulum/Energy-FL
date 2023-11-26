@@ -1,15 +1,13 @@
-
 import flwr as fl
 import tensorflow as tf
 from tensorflow import keras
-
 
 
 class DaSHFlowerClient(fl.client.NumPyClient):
     """A FlowerClient that uses MobileNetV3 for CIFAR-10 or a much smaller CNN for
     MNIST. Ideally this client should never be used"""
 
-    def __init__(self, trainset, valset, use_mnist: bool, name : str):
+    def __init__(self, trainset, valset, use_mnist: bool, name: str):
         self.x_train, self.y_train = trainset
         self.x_val, self.y_val = valset
         self.name = name
@@ -48,8 +46,8 @@ class DaSHFlowerClient(fl.client.NumPyClient):
         self.model.set_weights(params)
 
     def fit(self, parameters, config):
-        
         from common.epoch_logger import TimeHistory
+
         print("Client sampled for fit()")
         self.set_parameters(parameters)
         # Set hyperparameters from config sent by server/strategy
@@ -64,11 +62,11 @@ class DaSHFlowerClient(fl.client.NumPyClient):
             callbacks=[epoch_time_logger],
         )
 
-
         start_times = epoch_time_logger.start_times
         end_times = epoch_time_logger.end_times
-        
+
         import csv
+
         with open("Outputs/Experiments/epoch_logs.csv", "a", newline="") as f:
             writer = csv.writer(f)
             for index, (start_time, end_time) in enumerate(zip(start_times, end_times)):
@@ -81,7 +79,6 @@ class DaSHFlowerClient(fl.client.NumPyClient):
         return self.get_parameters({}), len(self.x_train), {}
 
     def evaluate(self, parameters, config):
-        
         self.set_parameters(parameters)
         (
             loss,
@@ -101,7 +98,7 @@ class DaSHFlowerClient(fl.client.NumPyClient):
 
         import numpy as np
         from sklearn.metrics import f1_score, precision_score, recall_score
-        
+
         y_pred1 = self.model.predict(self.x_val)
         y_pred = np.argmax(y_pred1, axis=1)
         for avg in multilabel_average_options:
@@ -114,12 +111,10 @@ class DaSHFlowerClient(fl.client.NumPyClient):
             metrics_dictionary["recall " + avg] = round(
                 recall_score(self.y_val, y_pred, average=avg, zero_division=0), 3
             )
-            
-        with open(f'Outputs/Evaluations/{self.name}{config.get("synced", "")}.txt', "w") as f:
+
+        with open(
+            f'Outputs/Evaluations/{self.name}{config.get("synced", "")}.txt', "w"
+        ) as f:
             f.write(str(metrics_dictionary))
 
         return loss, len(self.x_val), metrics_dictionary
-
-
-
-

@@ -5,7 +5,7 @@ run_finished_experiments = False  # Change to True to re-run everything
 import subprocess
 from common import generate_all_experiments
 from common import Experiment
-from clients import Aggregator, Party, PowerCollector
+from clients import database, Party, PowerCollector
 from common import configuration
 from common.database import get_completed_experiments
 import time
@@ -29,7 +29,7 @@ def run_experiment(expt: Experiment):
 
     # Setup all the clients, aggregators and power collectors
 
-    aggregator: Aggregator = Aggregator(
+    aggregator: database = database(
         ip=configuration.IP_AGGREGATOR,
         username=configuration.AGGREGATOR_USERNAME,
         flwrPort=configuration.AGGREGATOR_FLOWER_SERVER_PORT,

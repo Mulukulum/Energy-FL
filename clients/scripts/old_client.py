@@ -11,6 +11,7 @@ NUM_CLIENTS = -1
 with open("Outputs/Experiments/epoch_logs.csv", "w") as f:
     ...
 
+
 def add_parser_args(p):
     p.add_argument(
         "--agg_ip",
@@ -64,6 +65,7 @@ PI_NAME = args.pi_name
 
 from clients.flwr_clients import DaSHFlowerClient
 
+
 def prepare_dataset(use_mnist: bool):
     """Download and partitions the CIFAR-10/MNIST dataset."""
     global NUM_CLIENTS
@@ -94,6 +96,7 @@ def prepare_dataset(use_mnist: bool):
 
     return partitions, testset
 
+
 def main():
     use_mnist = True if args.dataset == "mnist" else False
 
@@ -106,11 +109,15 @@ def main():
     # Start Flower client setting its associated data partition
     fl.client.start_numpy_client(
         server_address=server_address,
-        client=DaSHFlowerClient(trainset=trainset, valset=valset, use_mnist=use_mnist, name = PI_NAME),
+        client=DaSHFlowerClient(
+            trainset=trainset, valset=valset, use_mnist=use_mnist, name=PI_NAME
+        ),
     )
 
     # Epoch Logs made prettier
-    with open('Outputs/Experiments/epoch_logs.csv','r') as f, open('Outputs/Experiments/temp.csv','w',newline='') as g:
+    with open("Outputs/Experiments/epoch_logs.csv", "r") as f, open(
+        "Outputs/Experiments/temp.csv", "w", newline=""
+    ) as g:
         rdr = csv.reader(f)
         wtr = csv.writer(g)
         round_count = 1
@@ -122,15 +129,11 @@ def main():
             if epoch > previous_epoch:
                 previous_epoch = epoch
             else:
-                round_count+=1
+                round_count += 1
                 previous_epoch = epoch
-            wtr.writerow((
-                round_count,
-                epoch,
-                start,
-                end
-            ))
-    os.remove(r'Outputs/Experiments/epoch_logs.csv')
-    os.rename(r'Outputs/Experiments/temp.csv', r'Outputs/Experiments/epoch_logs.csv')
-    
+            wtr.writerow((round_count, epoch, start, end))
+    os.remove(r"Outputs/Experiments/epoch_logs.csv")
+    os.rename(r"Outputs/Experiments/temp.csv", r"Outputs/Experiments/epoch_logs.csv")
+
+
 main()

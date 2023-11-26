@@ -28,9 +28,8 @@ ssh -tt {self.client} << EOF
     exit;
 EOF    
 """
-        
-        return subprocess.run(cmd_string, shell=True, capture_output=True)
 
+        return subprocess.run(cmd_string, shell=True, capture_output=True)
 
     def Popen(self, cmds: list) -> subprocess.Popen:
         """
@@ -52,12 +51,11 @@ ssh -tt {self.client} << EOF
     exit;
 EOF    
 """
-        
+
         return subprocess.Popen(cmd_string, shell=True)
 
 
 class Party:
-    
     def __init__(self, ip: str, username: str) -> None:
         self.ip = ip
         self.username = username
