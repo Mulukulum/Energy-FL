@@ -152,3 +152,4 @@ cython_debug/
 #.idea/
 
 /federated-learning-lib
+log.db
