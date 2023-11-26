@@ -146,3 +146,10 @@ class Aggregator:
     def ZMQ_stop_power_collection(self):
         from common import configuration
         self.broadcast.send_pyobj(configuration.ZMQ_STOP_POWER_COLLECTION)
+        
+    def ZMQ_shutdown(self):
+        import zmq
+        self.broadcast.close()
+        self.context.term()
+        del self.context
+        del self.broadcast
