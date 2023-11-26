@@ -1,4 +1,4 @@
-from common.database import create_experiment_log
+
 
 class Aggregator:
     
@@ -7,8 +7,7 @@ class Aggregator:
         self.username = username
         self.flwrPort = flwrPort
         self.zmqPort = zmqPort
-        self.create_experiment_log = create_experiment_log
-        self.create_experiment_log()
+
 
     def __repr__(self) -> str:
         return f"""Aggregator {self.username}@{self.ip} hosting flwr on {self.flwrPort} and broadcasting on {self.zmqPort}"""

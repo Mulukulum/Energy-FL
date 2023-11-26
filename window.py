@@ -3,8 +3,6 @@
 from common import adapt_and_convert
 from common import database
 
-database.create_experiment_log()
-
 adapt_and_convert()
 
 

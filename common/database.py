@@ -208,3 +208,5 @@ def nuke_experiments():
     con.commit()
     cur.close()
     con.close()
+
+create_experiment_log()
