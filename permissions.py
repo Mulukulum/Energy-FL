@@ -6,7 +6,7 @@ list_of_files = [
 ]
 
 def main():
-    for file in list:
+    for file in list_of_files:
         subprocess.run(f"chmod u+x {file} ; ",shell=True)
     
     if pathlib.Path("clients/scripts/sar_collector.sh").exists():
