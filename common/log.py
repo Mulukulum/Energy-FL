@@ -7,7 +7,7 @@ else:
     IP_SELF = DEVICE_USERNAME
 
 logging.basicConfig(
-    format=rf"%(asctime)s | %(levelname)s | [%(filename)s:%(lineno)d] {IP_SELF} | %(message)s |",
+    format=rf"%(asctime)s | %(levelname)s | [%(filename)s:%(lineno)d] {IP_SELF} | %(message)s",
     level=LOGGING_LEVEL,
     datefmt=r"%d %b %Y %H:%M:%S",
 )
