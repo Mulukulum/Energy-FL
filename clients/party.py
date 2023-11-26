@@ -42,7 +42,7 @@ EOF
         user_cmds = ""
         for cmd in cmds[:-1]:
             user_cmds += f"""{cmd} ; \n    """
-
+        user_cmds += cmds[-1]
         cmd_string = f"""
 ssh -tt {self.client} << EOF
     cd ~/Energy-FL;
