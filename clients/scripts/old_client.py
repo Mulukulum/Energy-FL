@@ -62,7 +62,7 @@ args = parser.parse_args()
 NUM_CLIENTS = args.num_parties
 PI_NAME = args.pi_name
 
-from common.flwr_clients import DaSHFlowerClient
+from clients.flwr_clients import DaSHFlowerClient
 
 def prepare_dataset(use_mnist: bool):
     """Download and partitions the CIFAR-10/MNIST dataset."""
