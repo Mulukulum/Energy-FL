@@ -58,8 +58,8 @@ def adapt_and_convert():
             float(proximal_mu),
             float(sample_fraction),
             version,
-            None if num_parties is "None" else int(num_parties),
-            None if run is "None" else int(run),
+            None if num_parties == "None" else int(num_parties),
+            None if run == "None" else int(run),
         )
 
     sqlite3.register_converter("experiment", convert_experiment)
