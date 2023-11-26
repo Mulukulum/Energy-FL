@@ -1,15 +1,13 @@
-import sqlite3
-import pathlib
-from common import adapt_and_convert
-from common import Experiment
+from common.database import create_experiment_log
 
-
-class database:
+class Aggregator:
+    
     def __init__(self, ip: str, username: str, flwrPort: int, zmqPort: int) -> None:
         self.ip = ip
         self.username = username
         self.flwrPort = flwrPort
         self.zmqPort = zmqPort
+        self.create_experiment_log = create_experiment_log
         self.create_experiment_log()
 
     def __repr__(self) -> str:
@@ -24,12 +22,9 @@ class database:
 
     def ZMQ_stop_power_collection(self):
         from common import configuration
-
         self.broadcast.send_pyobj(configuration.ZMQ_STOP_POWER_COLLECTION)
 
     def ZMQ_shutdown(self):
-        import zmq
-
         self.broadcast.close()
         self.context.term()
         del self.context

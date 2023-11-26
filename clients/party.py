@@ -71,9 +71,9 @@ if [ -d Outputs/Experiments/{exp.folder_name} ]; then echo 'exists' ; fi ;
         )
         if not exists:
             return
-            # Create the folder if it doesn't exist
-        pathlib.Path.mkdir(
-            f"Outputs/Experiments/{exp.folder_name}/{self.username}",
+        
+        # Create the folder for the party if it doesn't exist
+        pathlib.Path(f"Outputs/Experiments/{exp.folder_name}/{self.username}").mkdir(
             exist_ok=True,
             parents=True,
         )

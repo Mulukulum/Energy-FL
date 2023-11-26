@@ -78,7 +78,7 @@ def adapt_and_convert():
 def create_experiment_log() -> None:
     #! This assumes that the current working directory is always the ~/Energy-FL/ so that is important to keep in mind
 
-    if pathlib.Path.exists(r"Outputs/Experiments/log.db"):
+    if pathlib.Path(r"Outputs/Experiments/log.db").exists():
         return
 
     con = sqlite3.connect(
