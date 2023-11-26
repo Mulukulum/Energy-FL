@@ -5,10 +5,7 @@
 import getpass
 from .experiments import valid_datasets as VALID_DATASETS
 from .experiments import valid_fusions as VALID_FUSION_ALGOS
-from .experiments import fusion_translator
-
-
-FUSION_ALGOS_TRANSLATOR = fusion_translator
+from .experiments import fusion_translator as FUSION_ALGOS_TRANSLATOR
 
 IP_CLIENTS = {
     "rpi1": "10.8.1.38",
