@@ -1,0 +1,5 @@
+pyzmq
+flwr>=1.5.0
+scikit-learn
+tensorflow
+pybluez @ git+https://github.com/pybluez/pybluez@4d46ce1
