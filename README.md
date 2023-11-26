@@ -27,3 +27,5 @@ All modifications to the flwr folder are marked with
 ```
 
 at both the start and end of the modified code
+
+Ensure that all .sh files have execution permissions when you run the experiment
