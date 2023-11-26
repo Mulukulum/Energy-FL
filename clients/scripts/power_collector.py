@@ -128,7 +128,7 @@ SOCKET = CONTEXT.socket(zmq.SUB)
 SOCKET.connect(f"tcp://{ZMQ_BROADCAST_ADDRESS}")
 SOCKET.setsockopt(zmq.SUBSCRIBE, b"")
 
-interval = 0.2
+interval = 0.25
 process = threading.Thread(
     target=collect,
     args=[interval],
