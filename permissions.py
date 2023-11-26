@@ -10,4 +10,7 @@ def main():
         subprocess.run(f"chmod u+x {file} ; ",shell=True)
     
     if pathlib.Path("clients/scripts/sar_collector.sh").exists():
-        subprocess.run(f"chmod u+x clients/scripts/sar_collector.sh", shell=True)    
+        subprocess.run(f"chmod u+x clients/scripts/sar_collector.sh", shell=True)
+
+if __name__=="__main__":
+    main()
