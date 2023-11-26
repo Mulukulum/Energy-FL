@@ -19,3 +19,11 @@ and pip install the requirements
 ```
 pip install -r requirements.txt
 ```
+
+All modifications to the flwr folder are marked with 
+
+```
+#! ADDED MODIFICATION
+```
+
+at both the start and end of the modified code

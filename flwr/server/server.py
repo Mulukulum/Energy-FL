@@ -146,7 +146,19 @@ class Server:
                     history.add_metrics_distributed(
                         server_round=current_round, metrics=evaluate_metrics_fed
                     )
-
+#! ADDED MODIFICATION ADDED MODIFICATION ADDED MODIFICATION ADDED MODIFICATION ADDED MODIFICATION ADDED MODIFICATION ADDED MODIFICATION
+        current_round = -1
+        res_fed = self.evaluate_round(server_round=current_round, timeout=timeout)
+        if res_fed is not None:
+            loss_fed, evaluate_metrics_fed, _ = res_fed
+            if loss_fed is not None:
+                history.add_loss_distributed(
+                    server_round=current_round, loss=loss_fed
+                )
+                history.add_metrics_distributed(
+                    server_round=current_round, metrics=evaluate_metrics_fed
+                )
+#! ADDED MODIFICATION ADDED MODIFICATION ADDED MODIFICATION ADDED MODIFICATION ADDED MODIFICATION ADDED MODIFICATION ADDED MODIFICATION 
         # Bookkeeping
         end_time = timeit.default_timer()
         elapsed = end_time - start_time
