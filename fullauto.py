@@ -2,13 +2,14 @@
 
 run_finished_experiments = False  # Change to True to re-run everything
 
+import gc
+import time
 import subprocess
 from common import generate_all_experiments
 from common import Experiment
 from clients import Aggregator, Party, PowerCollector
 from common import configuration
 from common.database import get_completed_experiments
-import time
 
 batch_sizes = [16, 512]
 rounds_and_epochs = [(3, 4)]
@@ -51,6 +52,7 @@ def run_experiment(expt: Experiment):
                 username=user,
                 collection_party=party,
                 bluetooth_address=bt_addr,
+                zmq_broadcast_port=configuration.AGGREGATOR_ZMQ_BROADCAST_PORT,
                 experiment=expt,
             )
         )
@@ -62,6 +64,7 @@ def run_experiment(expt: Experiment):
 
     all_ips = configuration.IP_CLIENTS.copy()
     all_ips.update({configuration.DEVICE_USERNAME: configuration.IP_AGGREGATOR})
+
     sar.initialize_sar(usernames_ips=all_ips)
     subprocess.run(["chmod u+x clients/scripts/sar_collector.sh"], shell=True)
 
@@ -118,3 +121,5 @@ for experiment in all_experiments:
         run_experiment(experiment)
     elif run_finished_experiments:
         run_experiment(experiment)
+    gc.collect()
+    time.sleep(10)
