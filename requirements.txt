@@ -1,4 +1,0 @@
-pyzmq
-flwr>=1.5.0
-scikit-learn
-tensorflow
