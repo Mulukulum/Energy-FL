@@ -68,7 +68,6 @@ def run_experiment(expt: Experiment):
     all_ips = configuration.IP_CLIENTS.copy()
     all_ips.update({configuration.DEVICE_USERNAME: configuration.IP_AGGREGATOR})
 
-    energy_fl_logger.debug(f"SAR Initialized with {all_ips}")
     sar.initialize_sar(usernames_ips=all_ips)
     subprocess.run(["chmod u+x clients/scripts/sar_collector.sh"], shell=True)
 

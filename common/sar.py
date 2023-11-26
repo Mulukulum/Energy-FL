@@ -109,6 +109,8 @@ echo "All SAR data files collected."
 
 
 def initialize_sar(usernames_ips: dict):
+  
+    from .log import energy_fl_logger
     """
         Input a dictionary with the username of the machine and its ip that you want to collect SAR from
 
@@ -139,6 +141,6 @@ usernames={users}
         f.write(sar_header)
         f.write(sar_values)
         f.write(sar_footer)
-
+    energy_fl_logger.info(f"SAR was Initalized with {usernames_ips}")
 
 #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

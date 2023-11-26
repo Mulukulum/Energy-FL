@@ -1,4 +1,4 @@
-
+from common import energy_fl_logger
 
 class Aggregator:
     
@@ -14,17 +14,19 @@ class Aggregator:
 
     def ZMQ_setup(self):
         import zmq
-
         self.context = zmq.Context()
         self.broadcast = self.context.socket(zmq.PUB)
         self.broadcast.bind(f"tcp://{self.ip}:{self.zmqPort}")
+        energy_fl_logger.debug("ZMQ was Setup")
 
     def ZMQ_stop_power_collection(self):
         from common import configuration
         self.broadcast.send_pyobj(configuration.ZMQ_STOP_POWER_COLLECTION)
+        energy_fl_logger.debug("ZMQ Power Collection Stop Signal Sent")
 
     def ZMQ_shutdown(self):
         self.broadcast.close()
         self.context.term()
         del self.context
         del self.broadcast
+        energy_fl_logger.debug("ZMQ Shutdown")

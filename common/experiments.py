@@ -156,20 +156,41 @@ def generate_all_experiments(
     for dataset in valid_datasets:
         for model in valid_models:
             for fusion in valid_fusions:
-                for rounds, epochs in rounds_and_epochs:
-                    for batch_size in batch_sizes:
-                        for run in range(1, runs + 1):
-                            expt = Experiment(
-                                model=model,
-                                fusion=fusion,
-                                dataset=dataset,
-                                batch_size=batch_size,
-                                rounds=rounds,
-                                epochs=epochs,
-                                num_parties=num_parties,
-                                run=run,
-                            )
+                if fusion == "FedProx":
+                    proximal_mus = range(1,2,1)
+                    for proximal_mu in proximal_mus:
+                        for rounds, epochs in rounds_and_epochs:
+                            for batch_size in batch_sizes:
+                                for run in range(1, runs + 1):
+                                    expt = Experiment(
+                                        model=model,
+                                        fusion=fusion,
+                                        dataset=dataset,
+                                        batch_size=batch_size,
+                                        rounds=rounds,
+                                        epochs=epochs,
+                                        num_parties=num_parties,
+                                        run=run,
+                                        proximal_mu=proximal_mu
+                                    )
+                            
+                                    all_experiments.append(expt) 
+                            
+                else:
+                    for rounds, epochs in rounds_and_epochs:
+                        for batch_size in batch_sizes:
+                            for run in range(1, runs + 1):
+                                expt = Experiment(
+                                    model=model,
+                                    fusion=fusion,
+                                    dataset=dataset,
+                                    batch_size=batch_size,
+                                    rounds=rounds,
+                                    epochs=epochs,
+                                    num_parties=num_parties,
+                                    run=run,
+                                )
 
-                            all_experiments.append(expt)
+                                all_experiments.append(expt)
 
     return all_experiments
