@@ -46,7 +46,7 @@ class Experiment:
         proximal_mu: float = 0,
         sample_fraction: float = 1.0,
         version: str = __version__,
-        num_parties: int | None = None,
+        num_parties: int = None,
         run: int = None,
     ) -> None:
         self.model = model
