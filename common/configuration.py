@@ -6,7 +6,6 @@ import getpass
 from .experiments import valid_datasets as VALID_DATASETS
 from .experiments import valid_fusions as VALID_FUSION_ALGOS
 from .experiments import fusion_translator
-from .experiments import Experiment
 
 
 FUSION_ALGOS_TRANSLATOR = fusion_translator
