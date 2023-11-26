@@ -94,7 +94,7 @@ def collect(
             try:
                 d = read_measurements(sock)
             except bluetooth.BluetoothError:
-                time.sleep(0.2)
+                time.sleep(0.1)
                 fail_count+=1
                 if fail_count == 10 : print("10 Failures reached")
                 continue

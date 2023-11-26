@@ -30,6 +30,7 @@ def adapt_and_convert():
     sqlite3.register_converter("datetime", convert_datetime)
 
     def adapt_experiment(exp: Experiment):
+        #! Edit the cmd_suffixes later
         return f"{exp.version};{exp.model};{exp.fusion};{exp.dataset};{exp.batch_size};{exp.rounds};{exp.epochs};{exp.sample_fraction};{exp.proximal_mu};{exp.num_participating_parties};{exp.run}"
 
     sqlite3.register_adapter(Experiment, adapt_experiment)
@@ -100,7 +101,7 @@ def create_experiment_log() -> None:
     con.close()
 
 
-def get_completed_experiments() -> list[Experiment]:
+def get_completed_experiments(version_str : str = None) -> list[Experiment]:
     con = sqlite3.connect(
         r"Outputs/Experiments/log.db", detect_types=sqlite3.PARSE_DECLTYPES
     )
@@ -108,7 +109,12 @@ def get_completed_experiments() -> list[Experiment]:
 
     adapt_and_convert()
 
-    res = cur.execute(r"""SELECT expt FROM log WHERE is_finished=1 ;""")
+    if version_str is None:
+        cmd_suffix = f""
+    else:
+        cmd_suffix = f"AND expt LIKE '{version_str};%;%;%;%;%;%;%;%;%;%'"
+    
+    res = cur.execute(rf"""SELECT expt FROM log WHERE is_finished=1 {cmd_suffix} ;""")
     res = res.fetchall()
     list_of_experiments = [expt[0] for expt in res]
 
@@ -119,15 +125,20 @@ def get_completed_experiments() -> list[Experiment]:
     return list_of_experiments
 
 
-def get_incomplete_experiments() -> list[Experiment]:
+def get_incomplete_experiments(version_str : str = None) -> list[Experiment]:
     con = sqlite3.connect(
         r"Outputs/Experiments/log.db", detect_types=sqlite3.PARSE_DECLTYPES
     )
     cur = con.cursor()
 
     adapt_and_convert()
+    
+    if version_str is None:
+        cmd_suffix = f""
+    else:
+        cmd_suffix = f"AND expt LIKE '{version_str};%;%;%;%;%;%;%;%;%;%'"
 
-    res = cur.execute(r"""SELECT expt FROM log WHERE is_finished=0 ;""")
+    res = cur.execute(rf"""SELECT expt FROM log WHERE is_finished=0 {cmd_suffix} ;""")
     res = res.fetchall()
     list_of_experiments = [expt[0] for expt in res]
 
@@ -138,15 +149,20 @@ def get_incomplete_experiments() -> list[Experiment]:
     return list_of_experiments
 
 
-def get_experiments() -> list[Experiment]:
+def get_experiments(version_str : str = None) -> list[Experiment]:
     con = sqlite3.connect(
         r"Outputs/Experiments/log.db", detect_types=sqlite3.PARSE_DECLTYPES
     )
     cur = con.cursor()
 
     adapt_and_convert()
+    
+    if version_str is None:
+        cmd_suffix = f""
+    else:
+        cmd_suffix = f"WHERE expt LIKE '{version_str};%;%;%;%;%;%;%;%;%;%'"
 
-    res = cur.execute(r"""SELECT expt FROM log ;""")
+    res = cur.execute(rf"""SELECT expt FROM log {cmd_suffix} ;""")
     res = res.fetchall()
     list_of_experiments = [expt[0] for expt in res]
 
@@ -157,15 +173,20 @@ def get_experiments() -> list[Experiment]:
     return list_of_experiments
 
 
-def get_running_experiments() -> list[Experiment]:
+def get_running_experiments(version_str : str = None) -> list[Experiment]:
     con = sqlite3.connect(
         r"Outputs/Experiments/log.db", detect_types=sqlite3.PARSE_DECLTYPES
     )
     cur = con.cursor()
 
     adapt_and_convert()
+    
+    if version_str is None:
+        cmd_suffix = f""
+    else:
+        cmd_suffix = f"AND expt LIKE '{version_str};%;%;%;%;%;%;%;%;%;%'"
 
-    res = cur.execute(r"""SELECT expt FROM log WHERE is_running=1""")
+    res = cur.execute(rf"""SELECT expt FROM log WHERE is_running=1 {cmd_suffix}""")
     res = res.fetchall()
     list_of_experiments = [expt[0] for expt in res]
 
@@ -176,15 +197,20 @@ def get_running_experiments() -> list[Experiment]:
     return list_of_experiments
 
 
-def get_failed_experiments() -> list[Experiment]:
+def get_failed_experiments(version_str : str = None) -> list[Experiment]:
     con = sqlite3.connect(
         r"Outputs/Experiments/log.db", detect_types=sqlite3.PARSE_DECLTYPES
     )
     cur = con.cursor()
 
     adapt_and_convert()
+    
+    if version_str is None:
+        cmd_suffix = f""
+    else:
+        cmd_suffix = f"AND expt LIKE '{version_str};%;%;%;%;%;%;%;%;%;%'"
 
-    res = cur.execute(r"""SELECT expt FROM log WHERE has_failed=1""")
+    res = cur.execute(rf"""SELECT expt FROM log WHERE has_failed=1 {cmd_suffix}""")
     res = res.fetchall()
     list_of_experiments = [expt[0] for expt in res]
 
@@ -195,15 +221,20 @@ def get_failed_experiments() -> list[Experiment]:
     return list_of_experiments
 
 
-def nuke_experiments():
+def nuke_experiments(version_str : str = None):
     con = sqlite3.connect(
         r"Outputs/Experiments/log.db", detect_types=sqlite3.PARSE_DECLTYPES
     )
     cur = con.cursor()
-
+    
     adapt_and_convert()
+    
+    if version_str is None:
+        cmd_suffix = ""
+    else:
+        cmd_suffix = f"WHERE expt LIKE '{version_str};%;%;%;%;%;%;%;%;%;%'"
 
-    cur.execute(r"""DELETE FROM log""")
+    cur.execute(rf"""DELETE FROM log {cmd_suffix} ;""")
 
     con.commit()
     cur.close()
