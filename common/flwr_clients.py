@@ -74,8 +74,8 @@ class DaSHFlowerClient(fl.client.NumPyClient):
             for index, (start_time, end_time) in enumerate(zip(start_times, end_times)):
                 format = (
                     index + 1,
-                    start_time.strftime(r"%H:%M:%S"),
-                    end_time.strftime(r"%H:%M:%S"),
+                    start_time,
+                    end_time,
                 )
                 writer.writerow(format)
         return self.get_parameters({}), len(self.x_train), {}
