@@ -14,7 +14,7 @@ def adapt_and_convert():
     ```
     """
     
-    from common.experiments import Experiment
+    from Experiments import Experiment
     
     def adapt_datetime_iso(val):
             """Adapt datetime.datetime to timezone-naive ISO 8601 date."""

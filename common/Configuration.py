@@ -3,9 +3,9 @@
 # * Stuff like the IPs of the devices, ZMQ Ports and Which device is collecting power for which other device etc is here
 
 import flwr as fl
-from common.experiments import valid_datasets as VALID_DATASETS
-from common.experiments import valid_fusions as VALID_FUSION_ALGOS
-from common.experiments import Experiment
+from common.Experiments import valid_datasets as VALID_DATASETS
+from common.Experiments import valid_fusions as VALID_FUSION_ALGOS
+from common.Experiments import Experiment
 import getpass
 
 FUSION_ALGOS_TRANSLATOR = Experiment.fusion_translator
