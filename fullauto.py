@@ -7,6 +7,7 @@ import time
 import subprocess
 from common import generate_all_experiments
 from common import Experiment
+from common import __version__
 from clients import Aggregator, Party, PowerCollector
 from common import configuration
 from common.database import get_completed_experiments
@@ -123,7 +124,7 @@ def run_experiment(expt: Experiment):
     #! Done!
 
 
-completed_experiments = get_completed_experiments()
+completed_experiments = get_completed_experiments(version_str=__version__)
 
 for experiment in all_experiments:
     if experiment not in completed_experiments:
