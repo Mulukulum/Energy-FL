@@ -144,6 +144,7 @@ https://sigrok.org/wiki/RDTech_UM24C
 All data returned by the device consists of measurements and configuration status, in 130-byte chunks. To my knowledge, it will never send any other data. All bytes below are displayed in hex format; every command is a single byte.
 
 # Commands to send:
+A0 through A9 - Set Data group (0-9) 
 F0 - Request new data dump; this triggers a 130-byte response
 F1 - (device control) Go to next screen
 F2 - (device control) Rotate screen
