@@ -9,12 +9,12 @@ class DaSHFlowerClient(fl.client.NumPyClient):
 
     def __init__(self, trainset, valset, use_mnist: bool, name: str, expt_folder_name : str):
         import pathlib
-        pathlib.Path(f"Outputs/Experiments/{self.experiment_folder_name}").mkdir(parents=True, exist_ok=True)
         
         self.x_train, self.y_train = trainset
         self.x_val, self.y_val = valset
         self.name = name
         self.experiment_folder_name = expt_folder_name
+        pathlib.Path(f"Outputs/Experiments/{self.experiment_folder_name}").mkdir(parents=True, exist_ok=True)
         # Instantiate model
         if use_mnist:
             # small model for MNIST
