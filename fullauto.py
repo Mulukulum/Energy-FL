@@ -28,7 +28,7 @@ all_experiments = generate_all_experiments(
 
 def run_experiment(expt: Experiment):
     
-    energy_fl_logger.info(str(expt))
+    energy_fl_logger.info("\n" + str(expt))
 
     time.sleep(3)
 
@@ -77,7 +77,7 @@ def run_experiment(expt: Experiment):
     # Setup Bluetooth
     for collector in bluetooth_collectors:
         collector.pair_to_tester().wait()
-        energy_fl_logger.info(str(collector) + "was paired to tester")
+        energy_fl_logger.info(f"{str(collector)} was paired to tester")
 
     # Ready to start the experiment
 
