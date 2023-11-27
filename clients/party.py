@@ -65,12 +65,16 @@ class Party:
         return f"Party {self.username} on {self.ip}"
 
     def copy_files(self, exp: Experiment):
+        import random
+        num = random.randint(1042525, 9525765384)
+        
+        # * The reason I have to do this terribleness is because stdout of the subprocess also gives you all the raspi login text so this is much easier
         check_if_exists = f"""
-if [ -d Outputs/Experiments/{exp.folder_name} ]; then echo 'exists' ; fi ;
+if [ -d Outputs/Experiments/{exp.folder_name} ]; then echo '{num}' ; fi ;
 """
 
         exists = (
-            True if str(self.ssh.run([check_if_exists]).stdout) == "exists" else False
+            True if f"{num}" in str(self.ssh.run([check_if_exists]).stdout.decode()) else False
         )
         if not exists:
             energy_fl_logger.warning(f"Attempted to copy files for {str(self)} but the experiment folder does not exist.")
