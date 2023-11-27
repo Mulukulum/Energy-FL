@@ -8,9 +8,6 @@ import tensorflow as tf
 parser = argparse.ArgumentParser(description="Flower Embedded devices")
 NUM_CLIENTS = -1
 
-
-
-
 def add_parser_args(p):
     p.add_argument(
         "--agg_ip",
@@ -69,6 +66,9 @@ NUM_CLIENTS = args.num_parties
 PI_NAME = args.pi_name
 EXPT_NAME = args.expt_name
 
+import pathlib
+pathlib.Path(f"Outputs/Experiments/{EXPT_NAME}").mkdir(parents=True, exist_ok=True)
+
 with open(f"Outputs/Experiments/{EXPT_NAME}/epoch_logs.csv", "w") as f:
     ...
 
@@ -124,8 +124,8 @@ def main():
     )
 
     # Epoch Logs made prettier
-    with open("Outputs/Experiments/epoch_logs.csv", "r") as f, open(
-        "Outputs/Experiments/temp.csv", "w", newline=""
+    with open(f"Outputs/Experiments/{EXPT_NAME}/epoch_logs.csv", "r") as f, open(
+        f"Outputs/Experiments/{EXPT_NAME}/temp.csv", "w", newline=""
     ) as g:
         rdr = csv.reader(f)
         wtr = csv.writer(g)
@@ -141,8 +141,8 @@ def main():
                 round_count += 1
                 previous_epoch = epoch
             wtr.writerow((round_count, epoch, start, end))
-    os.remove(r"Outputs/Experiments/epoch_logs.csv")
-    os.rename(r"Outputs/Experiments/temp.csv", r"Outputs/Experiments/epoch_logs.csv")
+    os.remove(f"Outputs/Experiments/{EXPT_NAME}/epoch_logs.csv")
+    os.rename(f"Outputs/Experiments/{EXPT_NAME}/temp.csv", f"Outputs/Experiments/{EXPT_NAME}/epoch_logs.csv")
 
 
 main()

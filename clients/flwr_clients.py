@@ -8,6 +8,9 @@ class DaSHFlowerClient(fl.client.NumPyClient):
     MNIST. Ideally this client should never be used"""
 
     def __init__(self, trainset, valset, use_mnist: bool, name: str, expt_folder_name : str):
+        import pathlib
+        pathlib.Path(f"Outputs/Experiments/{self.experiment_folder_name}").mkdir(parents=True, exist_ok=True)
+        
         self.x_train, self.y_train = trainset
         self.x_val, self.y_val = valset
         self.name = name
@@ -67,7 +70,7 @@ class DaSHFlowerClient(fl.client.NumPyClient):
 
         import csv
 
-        with open("Outputs/Experiments/epoch_logs.csv", "a", newline="") as f:
+        with open(f"Outputs/Experiments/{self.experiment_folder_name}/epoch_logs.csv", "a", newline="") as f:
             writer = csv.writer(f)
             for index, (start_time, end_time) in enumerate(zip(start_times, end_times)):
                 format = (
@@ -113,7 +116,7 @@ class DaSHFlowerClient(fl.client.NumPyClient):
             )
 
         with open(
-            f'Outputs/Experiments//{self.name}{config.get("synced", "")}.txt', "w"
+            f'Outputs/Experiments/{self.experiment_folder_name}/{self.name}{config.get("synced", "")}.txt', "w"
         ) as f:
             f.write(str(metrics_dictionary))
 

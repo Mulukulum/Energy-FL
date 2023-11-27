@@ -61,7 +61,7 @@ class Experiment:
         self.num_participating_parties = num_parties
         self.check_validity()
         self.run = run
-        self.folder_name = f"{self.version};{self.model};{self.fusion};{self.dataset};{self.batch_size};{self.rounds};{self.epochs};{self.sample_fraction};{self.proximal_mu};{self.num_participating_parties};{self.run}"
+        self.folder_name = f"{self.version}_{self.model}_{self.fusion}_{self.dataset}_{self.batch_size}_{self.rounds}_{self.epochs}_{self.sample_fraction}_{self.proximal_mu}_{self.num_participating_parties}_{self.run}"
 
     def __eq__(self, __value) -> bool:
         if self.__class__ is not __value.__class__:
