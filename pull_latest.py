@@ -2,7 +2,7 @@ import subprocess
 import time
 
 USERNAMES_AND_IPS={
-    "pi3" : "10.8.1.200",
+    "pi2" : "10.8.1.35",
     "rpi1" : "10.8.1.38",
     "rpi2" : "10.8.1.43",
     "rpi3" : "10.8.1.192",
