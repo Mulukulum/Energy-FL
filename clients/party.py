@@ -88,7 +88,7 @@ if [ -d Outputs/Experiments/{exp.folder_name} ]; then echo '{num}' ; fi ;
         # SCP the file over
         res = subprocess.run(
             [
-                f"scp -r {self.username}@{self.ip}:~/Energy-FL/Outputs/Experiments/{exp.folder_name} ./Outputs/Experiments/{exp.folder_name}/{self.username}/ "
+                f"scp -r {self.username}@{self.ip}:~/Energy-FL/Outputs/Experiments/{exp.folder_name}/* ./Outputs/Experiments/{exp.folder_name}/{self.username}/ "
             ],
             shell=True,
         )
@@ -96,12 +96,6 @@ if [ -d Outputs/Experiments/{exp.folder_name} ]; then echo '{num}' ; fi ;
             energy_fl_logger.error(f"Code detects that folder exists on {str(self)} but SCP to aggregator Failed")
             return
 
-        subprocess.run(
-            [
-                f"mv Outputs/Experiments/{exp.folder_name}/{self.username}/* Outputs/Experiments/{exp.folder_name}"
-            ],
-            shell=True,
-        )
     def start_client_server(
         self, agg_ip: str, agg_port: int, cid: int, dataset: str, num_parties: int, expt_name : str
     ):
