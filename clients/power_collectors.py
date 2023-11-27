@@ -36,5 +36,5 @@ class PowerCollector:
             ]
         )
     
-    def move_files_to_aggregator(self):
+    def copy_files_to_aggregator(self):
         subprocess.run([f"scp {self.ssh.client}:~/Energy-FL/Outputs/Power/{self.experiment_name}.pkl ~/Energy-FL/Outputs/Experiments/{self.experiment_folder_name}/"], shell=True)

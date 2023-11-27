@@ -125,6 +125,11 @@ def run_experiment(expt: Experiment):
     aggregator.ZMQ_shutdown()
 
     #! Done!
+    
+    for party in parties:
+        party.copy_files(expt)
+    for bt in bluetooth_collectors:
+        bt.copy_files_to_aggregator()
 
 
 completed_experiments = get_completed_experiments(version_str=__version__)
