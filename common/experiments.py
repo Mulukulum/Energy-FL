@@ -144,6 +144,15 @@ class Experiment:
             raise ValueError(f"{self.sample_fraction} is not a valid sample-fraction")
         if not (0 <= self.proximal_mu):
             raise ValueError(f"{self.proximal_mu} is not a valid proximal-mu")
+    
+    def prepare_for_run(self, wipe_contents_if_exists : bool = False):
+        from pathlib import Path
+        from subprocess import run
+        try:
+            Path(f"Outputs/Experiments/{self.folder_name}/").mkdir(parents=True)
+        except FileExistsError:
+            if wipe_contents_if_exists:
+                run(f"rm -rf Outputs/Experiments/{self.folder_name}/* ", shell=True)
 
 
 def generate_all_experiments(

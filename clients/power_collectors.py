@@ -1,6 +1,6 @@
 from clients.party import sshRunner, Party
 from common import Experiment
-
+import subprocess
 
 class PowerCollector:
     def __init__(
@@ -18,7 +18,8 @@ class PowerCollector:
         self.party_username = collection_party_username
         self.tester_address = bluetooth_address
         self.broadcast_port = zmq_broadcast_port
-        self.experiment_name = f"{experiment.folder_name}_{self.party_username}"
+        self.experiment_folder_name = experiment.folder_name
+        self.experiment_name = f"{self.experiment_folder_name}_{self.party_username}"
 
     def __repr__(self) -> str:
         return f"{self.party_username}@{self.ip} using {self.tester_address} to log {self.party_username}"
@@ -34,3 +35,6 @@ class PowerCollector:
                 f"""python clients/scripts/power_collector.py --filename "{self.experiment_name}" --zmq_ip {agg_ip}:{self.broadcast_port} --address {self.tester_address} ;"""
             ]
         )
+    
+    def move_files_to_aggregator(self):
+        subprocess.run([f"scp {self.ssh.client}:~/Energy-FL/Outputs/Power/{self.experiment_name}.pkl ~/Energy-FL/Outputs/Experiments/{self.experiment_folder_name}/"], shell=True)

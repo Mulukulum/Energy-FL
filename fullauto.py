@@ -33,6 +33,8 @@ def run_experiment(expt: Experiment):
     time.sleep(3)
 
     # Setup all the clients, aggregators and power collectors
+    
+    expt.prepare_for_run(wipe_contents_if_exists=True)
 
     aggregator: Aggregator = Aggregator(
         ip=configuration.IP_AGGREGATOR,
@@ -88,7 +90,7 @@ def run_experiment(expt: Experiment):
     energy_fl_logger.info("Power Collection Started")
 
     sar_process = subprocess.Popen(
-        ["./clients/scripts/sar_collector.sh"], shell=True, stdin=subprocess.PIPE
+        [f"./clients/scripts/sar_collector.sh {expt.folder_name}"], shell=True, stdin=subprocess.PIPE
     )
 
     energy_fl_logger.info("SAR Started. Waiting 5 seconds to start parties")
@@ -101,6 +103,7 @@ def run_experiment(expt: Experiment):
             cid=cid,
             dataset=expt.dataset,
             num_parties=expt.num_participating_parties,
+            expt_name=expt.folder_name
         )
 
     args = {

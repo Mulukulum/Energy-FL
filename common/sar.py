@@ -1,5 +1,6 @@
 sar_header = r"""#!/bin/bash
 color='\033[1;31m' # set the color to bold red
+folder=$1
 """
 #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -58,9 +59,9 @@ for ((i=0;i<${#hosts[@]};++i)); do
     host=${hosts[i]}
     username=${usernames[i]}
     if [ "$username" = "user" ]; then
-	mv -f $username-sar.txt ~/Energy-FL/Outputs/$username-sar.txt
+	mv -f $username-sar.txt ~/Energy-FL/Outputs/Experiments/${folder}/$username-sar.txt
     else
-    	scp $username@$host:$username-sar.txt ~/Energy-FL/Outputs/
+    	scp $username@$host:$username-sar.txt ~/Energy-FL/Outputs/Experiments/${folder}/$username-sar.txt
     fi
     echo "";
     echo -e "SAR data file transferred from ${color1}${host}\033[0m."
@@ -94,7 +95,7 @@ awk '/^Average:/ {
     getline
     print $2, $3
   }
-}' ~/Energy-FL/Outputs/$username-sar.txt | column -t
+}' ~/Energy-FL/Outputs/Experiments/${folder}/$username-sar.txt | column -t
 done
 echo "";
 echo "All SAR data files collected."

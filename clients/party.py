@@ -1,7 +1,7 @@
 import subprocess
 from common import Experiment
 import pathlib
-
+from common import energy_fl_logger
 
 class sshRunner:
     """Use this class primarily to run scripts in the clients/scripts/ folder"""
@@ -60,6 +60,9 @@ class Party:
         self.ip = ip
         self.username = username
         self.ssh = sshRunner(f"{self.username}@{self.ip}")
+    
+    def __repr__(self) -> str:
+        return f"Party {self.username} on {self.ip}"
 
     def copy_files(self, exp: Experiment):
         check_if_exists = f"""
@@ -70,6 +73,7 @@ if [ -d Outputs/Experiments/{exp.folder_name} ]; then echo 'exists' ; fi ;
             True if str(self.ssh.run([check_if_exists]).stdout) == "exists" else False
         )
         if not exists:
+            energy_fl_logger.warning(f"Attempted to copy files for {str(self)} but the experiment folder does not exist.")
             return
         
         # Create the folder for the party if it doesn't exist
@@ -85,7 +89,7 @@ if [ -d Outputs/Experiments/{exp.folder_name} ]; then echo 'exists' ; fi ;
             shell=True,
         )
         if res.returncode != 0:
-            # TODO : Log that the scp failed
+            energy_fl_logger.error(f"Code detects that folder exists on {str(self)} but SCP to aggregator Failed")
             return
         # Extract all the files from said folder incl subfolders and delete the original folder
         subprocess.run(
@@ -100,10 +104,10 @@ if [ -d Outputs/Experiments/{exp.folder_name} ]; then echo 'exists' ; fi ;
         )
 
     def start_client_server(
-        self, agg_ip: str, agg_port: int, cid: int, dataset: str, num_parties: int
+        self, agg_ip: str, agg_port: int, cid: int, dataset: str, num_parties: int, expt_name : str
     ):
         self.ssh.Popen(
             [
-                f"python -m clients.scripts.old_client --agg_ip {agg_ip} --agg_port {agg_port} --cid {cid} --dataset {dataset} --client_ip {self.ip} --num_parties {num_parties} --pi_name {self.username} "
+                f"python -m clients.scripts.old_client --agg_ip {agg_ip} --agg_port {agg_port} --cid {cid} --dataset {dataset} --client_ip {self.ip} --num_parties {num_parties} --pi_name {self.username} --expt_name {expt_name} "
             ]
         )

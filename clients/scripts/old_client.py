@@ -8,8 +8,7 @@ import tensorflow as tf
 parser = argparse.ArgumentParser(description="Flower Embedded devices")
 NUM_CLIENTS = -1
 
-with open("Outputs/Experiments/epoch_logs.csv", "w") as f:
-    ...
+
 
 
 def add_parser_args(p):
@@ -55,6 +54,12 @@ def add_parser_args(p):
         required=True,
         help=f"Name of the RPI",
     )
+    p.add_argument(
+        "--expt_name",
+        type=str,
+        required=True,
+        help=f"Name of the Experiment folder that is created in Outputs/Experiments",
+    )
 
 
 add_parser_args(parser)
@@ -62,6 +67,10 @@ add_parser_args(parser)
 args = parser.parse_args()
 NUM_CLIENTS = args.num_parties
 PI_NAME = args.pi_name
+EXPT_NAME = args.expt_name
+
+with open(f"Outputs/Experiments/{EXPT_NAME}/epoch_logs.csv", "w") as f:
+    ...
 
 from clients.flwr_clients import DaSHFlowerClient
 
@@ -110,7 +119,7 @@ def main():
     fl.client.start_numpy_client(
         server_address=server_address,
         client=DaSHFlowerClient(
-            trainset=trainset, valset=valset, use_mnist=use_mnist, name=PI_NAME
+            trainset=trainset, valset=valset, use_mnist=use_mnist, name=PI_NAME, expt_folder_name=EXPT_NAME
         ),
     )
 
