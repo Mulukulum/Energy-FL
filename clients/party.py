@@ -81,7 +81,7 @@ if [ -d Outputs/Experiments/{exp.folder_name} ]; then echo '{num}' ; fi ;
             return
         
         # Create the folder for the party if it doesn't exist
-        pathlib.Path(f"Outputs/Experiments/{exp.folder_name}/{self.username}").mkdir(
+        pathlib.Path(f"Outputs/Experiments/{exp.folder_name}/{self.username}/").mkdir(
             exist_ok=True,
             parents=True,
         )
@@ -95,18 +95,13 @@ if [ -d Outputs/Experiments/{exp.folder_name} ]; then echo '{num}' ; fi ;
         if res.returncode != 0:
             energy_fl_logger.error(f"Code detects that folder exists on {str(self)} but SCP to aggregator Failed")
             return
-        # Extract all the files from said folder incl subfolders and delete the original folder
+
         subprocess.run(
             [
                 f"mv Outputs/Experiments/{exp.folder_name}/{self.username}/* Outputs/Experiments/{exp.folder_name}"
             ],
             shell=True,
         )
-        subprocess.run(
-            [f"rm -rf Outputs/Experiments/{exp.folder_name}/{self.username}"],
-            shell=True,
-        )
-
     def start_client_server(
         self, agg_ip: str, agg_port: int, cid: int, dataset: str, num_parties: int, expt_name : str
     ):
