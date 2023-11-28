@@ -94,11 +94,11 @@ def collect(
         while True:
             try:
                 d = read_measurements(sock)
-            except bluetooth.BluetoothError:
+            except bluetooth.BluetoothError as e:
                 time.sleep(0.1)
                 fail_count+=1
                 if not (fail_count % 10): 
-                    energy_fl_logger.warning(f"Failcount is currently : {fail_count}")
+                    energy_fl_logger.warning(f"Failcount is currently : {fail_count} Exception : {e}")
                 continue
             except Exception as e:
                 energy_fl_logger.error(f"Reading Measurements failed due to unknown error {e}")
