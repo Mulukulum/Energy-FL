@@ -70,6 +70,8 @@ for ((i=0;i<${#hosts[@]};++i)); do
     color='\033[1;31m' # set the color to bold red
     echo -e "${color}${username}\033[0m" # print the message in bold red
 
+if [ "$username" = "user" ]; then
+ 
 awk '/^Average:/ {
   if ($2 == "CPU") {
     printf("%s%s%s\n", "\033[1;32m", "CPU", "\033[0m")
@@ -95,7 +97,37 @@ awk '/^Average:/ {
     getline
     print $2, $3
   }
-}' ~/Energy-FL/Outputs/Experiments/${folder}/${username}/$username-sar.txt | column -t
+}' ~/Energy-FL/Outputs/Experiments/${folder}/$username-sar.txt | column -t ;
+
+else
+
+awk '/^Average:/ {
+  if ($2 == "CPU") {
+    printf("%s%s%s\n", "\033[1;32m", "CPU", "\033[0m")
+    print "%user", "%system"
+    getline
+    print $3, $5
+  }
+  if ($2 == "kbmemfree") {
+    printf("%s%s%s\n", "\033[1;32m", "Memory", "\033[0m")
+    print "kbmemused", "%memused"
+    getline
+    print $4, $5
+  }
+  if ($2 == "tps") {
+    printf("%s%s%s\n", "\033[1;32m", "Disk", "\033[0m")
+    print "rkB/s", "wkB/s"
+    getline
+    print $3, $4
+  }
+  if ($2 == "rxpck/s") {
+    printf("%s%s%s\n", "\033[1;32m", "Network", "\033[0m")
+    print "rxpck/s", "txpck/s"
+    getline
+    print $2, $3
+  }
+}' ~/Energy-FL/Outputs/Experiments/${folder}/${username}/$username-sar.txt | column -t ;
+
 done
 echo "";
 echo "All SAR data files collected."
