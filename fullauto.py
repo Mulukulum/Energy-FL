@@ -119,7 +119,8 @@ def run_experiment(expt: Experiment):
     }
 
     run_flwr_server(args=args)
-
+    energy_fl_logger.info("Flower Server Finished Running!")
+    time.sleep(1)
     sar_process.communicate(b"\n")
     aggregator.ZMQ_stop_power_collection()
     aggregator.ZMQ_shutdown()
