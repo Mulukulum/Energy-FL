@@ -100,7 +100,7 @@ def collect(
                 continue
             # Time with seconds to two decimal points
             now = dt.now().strftime(r"%H:%M:%S.%f")[:-4]
-            pickle.dump({now: d}, f)
+            pickle.dump((now, d), f)
             if STOP_COLLECTING:
                 break
             time.sleep(interval)
