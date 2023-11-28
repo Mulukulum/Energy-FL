@@ -1,7 +1,7 @@
 #! This file exists so you can SSH into the aggregator and see what exactly is going on
 
-from common import adapt_and_convert
 from common import database
+from common.database import adapt_and_convert
 
 adapt_and_convert()
 
