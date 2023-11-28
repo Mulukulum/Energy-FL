@@ -15,6 +15,7 @@ import time
 import threading
 import zmq
 import argparse
+from common import energy_fl_logger
 
 parser = argparse.ArgumentParser()
 parser.add_argument(
@@ -96,15 +97,18 @@ def collect(
             except bluetooth.BluetoothError:
                 time.sleep(0.1)
                 fail_count+=1
-                if fail_count == 10 : print("10 Failures reached")
+                if not (fail_count % 10): 
+                    energy_fl_logger.warning(f"Failcount is currently : {fail_count}")
                 continue
+            except Exception:
+                energy_fl_logger.error("Reading Measurements failed due to unknown error")
             # Time with seconds to 3 decimal points
             now = dt.now().strftime(r"%H:%M:%S.%f")[:-3]
             pickle.dump((now, d), f)
             if STOP_COLLECTING:
                 break
             time.sleep(interval)
-
+    energy_fl_logger.info("Stopped Power Collection")
     sock.close()
 
 
