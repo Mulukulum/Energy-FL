@@ -14,7 +14,7 @@ from common.database import get_completed_experiments
 from common import energy_fl_logger
 
 batch_sizes = [16, 512]
-rounds_and_epochs = [(3, 4)]
+rounds_and_epochs = [(2, 2)]
 runs = 3
 num_parties = len(configuration.IP_CLIENTS)
 
