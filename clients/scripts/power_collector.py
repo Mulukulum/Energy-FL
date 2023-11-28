@@ -54,11 +54,11 @@ def read_data(sock):
 
 def set_initial_parameters(sock):
     sock.send(bytes([SET_DATA_GROUP_FIVE]))
-    time.sleep(5)
+    time.sleep(0.1)
     sock.send(bytes([SET_SCREENSAVER]))
-    time.sleep(3)
+    time.sleep(0.1)
     sock.send(bytes([DIM_SCREEN]))
-    time.sleep(2)
+    time.sleep(0.1)
     sock.send(bytes([CLEAR_DATA_GROUP]))
 
 
@@ -87,9 +87,9 @@ def collect(
 
     filepath = f"Outputs/Power/{name}.pkl"
     sock = connect_to_usb_tester(UM25C_ADDRESS)
-    set_initial_parameters(sock)
     fail_count = 0
     with open(filepath, "wb") as f:
+        set_initial_parameters(sock)
         while True:
             try:
                 d = read_measurements(sock)
@@ -98,8 +98,8 @@ def collect(
                 fail_count+=1
                 if fail_count == 10 : print("10 Failures reached")
                 continue
-            # Time with seconds to two decimal points
-            now = dt.now().strftime(r"%H:%M:%S.%f")[:-4]
+            # Time with seconds to 3 decimal points
+            now = dt.now().strftime(r"%H:%M:%S.%f")[:-3]
             pickle.dump((now, d), f)
             if STOP_COLLECTING:
                 break
@@ -129,14 +129,14 @@ SOCKET.connect(f"tcp://{ZMQ_BROADCAST_ADDRESS}")
 SOCKET.setsockopt(zmq.SUBSCRIBE, b"")
 
 interval = 0.25
-process = threading.Thread(
+thread = threading.Thread(
     target=collect,
     args=[interval],
 )
-process.start()
+thread.start()
 wait_until_ready(STOP_POWER_COLLECTION, SOCKET)
 STOP_COLLECTING = True
-process.join()
+thread.join()
 
 """
 https://sigrok.org/wiki/RDTech_UM24C
@@ -144,12 +144,12 @@ https://sigrok.org/wiki/RDTech_UM24C
 All data returned by the device consists of measurements and configuration status, in 130-byte chunks. To my knowledge, it will never send any other data. All bytes below are displayed in hex format; every command is a single byte.
 
 # Commands to send:
-A0 through A9 - Set Data group (0-9) 
 F0 - Request new data dump; this triggers a 130-byte response
 F1 - (device control) Go to next screen
 F2 - (device control) Rotate screen
-F3 - (device control) Switch to next data group
+F3 - (device control) Go to the previous screen
 F4 - (device control) Clear data group
+Ax - (device control) Set the selected data group (0-9)
 Bx - (configuration) Set recording threshold to a value between 0.00 and 0.15 A (where 'x' in the byte is 4 bits representing the value after the decimal point, eg. B7 to set it to 0.07 A)
 Cx - (configuration) Same as Bx, but for when you want to set it to a value between 0.16 and 0.30 A (16 subtracted from the value behind the decimal point, eg. 0.19 A == C3)
 Dx - (configuration) Set device backlight level; 'x' must be between 0 and 5 (inclusive)
