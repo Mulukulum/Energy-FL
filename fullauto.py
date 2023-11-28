@@ -126,6 +126,7 @@ def run_experiment(expt: Experiment):
     sar_process.communicate(b"\n")
     aggregator.ZMQ_stop_power_collection()
     aggregator.ZMQ_shutdown()
+    time.sleep(20)
 
     #! Done!
     
