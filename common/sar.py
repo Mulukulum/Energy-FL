@@ -61,7 +61,7 @@ for ((i=0;i<${#hosts[@]};++i)); do
     if [ "$username" = "user" ]; then
 	mv -f $username-sar.txt ~/Energy-FL/Outputs/Experiments/${folder}/$username-sar.txt
     else
-    	mkdir -p ~/Energy-FL/Outputs/Experiments/${folder}/${username} ; scp $username@$host:$username-sar.txt ~/Energy-FL/Outputs/Experiments/${folder}/${username}/$username-sar.txt
+    	mkdir -p ~/Energy-FL/Outputs/Experiments/${folder}/${username} ; scp $username@$host:$username-sar.txt ~/Energy-FL/Outputs/Experiments/${folder}/${username}/$username-sar.txt ;
     fi
     echo "";
     echo -e "SAR data file transferred from ${color1}${host}\033[0m."
@@ -95,7 +95,7 @@ awk '/^Average:/ {
     getline
     print $2, $3
   }
-}' ~/Energy-FL/Outputs/Experiments/${folder}/$username-sar.txt | column -t
+}' ~/Energy-FL/Outputs/Experiments/${folder}/${username}/$username-sar.txt | column -t
 done
 echo "";
 echo "All SAR data files collected."
