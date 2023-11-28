@@ -4,9 +4,22 @@
 
 import logging
 import getpass
-from .experiments import valid_datasets as VALID_DATASETS
-from .experiments import valid_fusions as VALID_FUSION_ALGOS
-from .experiments import fusion_translator as FUSION_ALGOS_TRANSLATOR
+
+VALID_FUSION_ALGOS = [
+    "FedAvg",
+    "FedProx",
+]
+
+VALID_MODELS = [
+    "tf-cnn",
+]
+
+VALID_DATASETS = [
+    "cifar10",
+    "mnist",
+]
+
+VALID_PROXIMAL_MU: list[float] = [1.0]
 
 IP_CLIENTS = {
     "rpi1": "10.8.1.38",

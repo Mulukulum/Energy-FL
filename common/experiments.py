@@ -2,39 +2,23 @@
 
 # * This file contains everything a client needs to know about an FL experiment
 
-import flwr as fl
-
 # Let us initialize all the parameters that we will be using for testing
 
 __version__ = "v0.1"
 
-valid_fusions = [
-    "FedAvg",
-    "FedProx",
-]
-
-valid_models = [
-    "tf-cnn",
-]
-
-valid_datasets = [
-    "cifar10",
-    "mnist",
-]
-
+import flwr as fl
+from .configuration import VALID_DATASETS, VALID_FUSION_ALGOS, VALID_MODELS
 # Initializing params that are not required for every experiment
+from .configuration import VALID_PROXIMAL_MU
 
-valid_proximal_mu: list[float] = [1.0]
-
-fusion_translator = {
+FUSION_ALGOS_TRANSLATOR = {
     "FedAvg": fl.server.strategy.FedAvg,
     "FedProx": fl.server.strategy.FedProx,
 }
 
-
 class Experiment:
     # * this entire class should probably be a dataclass but I decided to write it manually since i'm not familiar with dataclasses
-
+    
     def __init__(
         self,
         model: str,
@@ -134,11 +118,11 @@ class Experiment:
         """
 
     def check_validity(self):
-        if self.model not in valid_models:
+        if self.model not in VALID_MODELS:
             raise ValueError(f"{self.model} is not a valid model")
-        if self.fusion not in valid_fusions:
+        if self.fusion not in VALID_FUSION_ALGOS:
             raise ValueError(f"{self.fusion} is not a valid fusion")
-        if self.dataset not in valid_datasets:
+        if self.dataset not in VALID_DATASETS:
             raise ValueError(f"{self.dataset} is not a valid dataset")
         if not (0.0 <= self.sample_fraction <= 1.0):
             raise ValueError(f"{self.sample_fraction} is not a valid sample-fraction")
@@ -162,9 +146,9 @@ def generate_all_experiments(
     num_parties: int,
 ) -> list[Experiment]:
     all_experiments = []
-    for dataset in valid_datasets:
-        for model in valid_models:
-            for fusion in valid_fusions:
+    for dataset in VALID_DATASETS:
+        for model in VALID_MODELS:
+            for fusion in VALID_FUSION_ALGOS:
                 if fusion == "FedProx":
                     proximal_mus = range(1,2,1)
                     for proximal_mu in proximal_mus:
