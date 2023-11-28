@@ -1,4 +1,4 @@
-from common import energy_fl_logger
+from common.log import energy_fl_logger
 
 class Aggregator:
     

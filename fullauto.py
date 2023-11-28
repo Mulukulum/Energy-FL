@@ -5,13 +5,13 @@ run_finished_experiments = False  # Change to True to re-run everything
 import gc
 import time
 import subprocess
-from common import generate_all_experiments
-from common import Experiment
-from common import __version__
+from common.experiments import generate_all_experiments
+from common.experiments import Experiment
+from common.experiments import __version__
 from clients import Aggregator, Party, PowerCollector
 from common import configuration
 from common.database import get_completed_experiments
-from common import energy_fl_logger
+from common.log import energy_fl_logger
 
 batch_sizes = [16, 512]
 rounds_and_epochs = [(2, 2)]

@@ -15,7 +15,7 @@ import time
 import threading
 import zmq
 import argparse
-from common import energy_fl_logger
+from common.log import energy_fl_logger
 
 parser = argparse.ArgumentParser()
 parser.add_argument(

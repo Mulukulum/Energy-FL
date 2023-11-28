@@ -1,7 +1,7 @@
 import subprocess
-from common import Experiment
+from common.experiments import Experiment
 import pathlib
-from common import energy_fl_logger
+from common.log import energy_fl_logger
 
 class sshRunner:
     """Use this class primarily to run scripts in the clients/scripts/ folder"""

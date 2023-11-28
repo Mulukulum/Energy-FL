@@ -1,5 +1,5 @@
 from clients.party import sshRunner, Party
-from common import Experiment
+from common.experiments import Experiment
 import subprocess
 
 class PowerCollector:
