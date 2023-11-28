@@ -1,7 +1,7 @@
 import flwr as fl
 import tensorflow as tf
 from tensorflow import keras
-
+fl.common.logger.logger.propagate = False
 
 class DaSHFlowerClient(fl.client.NumPyClient):
     """A FlowerClient that uses MobileNetV3 for CIFAR-10 or a much smaller CNN for
