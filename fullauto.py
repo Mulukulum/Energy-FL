@@ -8,7 +8,7 @@ import subprocess
 from common.experiments import generate_all_experiments
 from common.experiments import Experiment
 from common.experiments import __version__
-from clients import Aggregator, Party, PowerCollector
+from clients.aggregator import Aggregator, Party, PowerCollector
 from common import configuration
 from common.database import get_completed_experiments
 from common.log import energy_fl_logger
