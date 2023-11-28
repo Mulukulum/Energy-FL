@@ -18,7 +18,6 @@ from common.log import energy_fl_logger
 batch_sizes = [16, 64, 128, 256, 512]
 rounds_and_epochs = [(3, 4)]
 runs = 3
-#afjjwaofjwaoifjo
 num_parties = len(configuration.IP_CLIENTS)
 
 all_experiments = generate_all_experiments(
