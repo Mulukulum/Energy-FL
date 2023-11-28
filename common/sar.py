@@ -127,6 +127,7 @@ awk '/^Average:/ {
     print $2, $3
   }
 }' ~/Energy-FL/Outputs/Experiments/${folder}/${username}/$username-sar.txt | column -t ;
+fi
 
 done
 echo "";
