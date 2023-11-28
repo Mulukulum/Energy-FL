@@ -8,6 +8,9 @@ sudo apt install expect
 sudo apt install sysstat
 ```
 
+### Ensure that the locale of the machine is set to something with a 24 hour clock
+### en_GB locales are ideal
+
 Create a virtual environment
 
 ```
