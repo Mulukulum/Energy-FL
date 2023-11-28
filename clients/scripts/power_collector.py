@@ -100,8 +100,8 @@ def collect(
                 if not (fail_count % 10): 
                     energy_fl_logger.warning(f"Failcount is currently : {fail_count}")
                 continue
-            except Exception:
-                energy_fl_logger.error("Reading Measurements failed due to unknown error")
+            except Exception as e:
+                energy_fl_logger.error(f"Reading Measurements failed due to unknown error {e}")
             # Time with seconds to 3 decimal points
             now = dt.now().strftime(r"%H:%M:%S.%f")[:-3]
             pickle.dump((now, d), f)
