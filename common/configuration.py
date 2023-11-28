@@ -15,8 +15,8 @@ VALID_MODELS = [
 ]
 
 VALID_DATASETS = [
-    "cifar10",
     "mnist",
+    "cifar10"
 ]
 
 VALID_PROXIMAL_MU: list[float] = [1.0]
