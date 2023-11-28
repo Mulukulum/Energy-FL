@@ -32,7 +32,7 @@ class PowerCollector:
     def collect_power_data(self, agg_ip: str):
         self.ssh.Popen(
             [
-                f"""python clients/scripts/power_collector.py --filename "{self.experiment_name}" --zmq_ip {agg_ip}:{self.broadcast_port} --address {self.tester_address} ;"""
+                f"""python -m clients.scripts.power_collector --filename "{self.experiment_name}" --zmq_ip {agg_ip}:{self.broadcast_port} --address {self.tester_address} ;"""
             ]
         )
     
