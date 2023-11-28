@@ -1,6 +1,7 @@
 from typing import List, Tuple
 from flwr.common import Metrics
 from common import configuration as config
+from common import experiments
 import flwr as fl
 
 rounds = -1
@@ -77,10 +78,10 @@ def main(args: dict = None):
         sample_fraction = args["sample_fraction"]
         proximal_mu = args.get("proximal_mu", 1)
 
-    fusion = config.FUSION_ALGOS_TRANSLATOR[fusion]
+    fusion = experiments.FUSION_ALGOS_TRANSLATOR[fusion]
     # Define strategy
 
-    if fusion == config.FUSION_ALGOS_TRANSLATOR["FedProx"]:
+    if fusion == experiments.FUSION_ALGOS_TRANSLATOR["FedProx"]:
         strategy = fusion(
             fraction_fit=sample_fraction,
             fraction_evaluate=sample_fraction,
