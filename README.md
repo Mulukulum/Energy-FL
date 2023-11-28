@@ -5,6 +5,7 @@
 ```
 sudo apt install libbluetooth-dev
 sudo apt install expect
+sudo apt install sysstat
 ```
 
 Create a virtual environment
