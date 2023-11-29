@@ -187,6 +187,7 @@ class Experiment:
         con = sqlite3.connect(r"Outputs/Experiments/log.db", detect_types=sqlite3.PARSE_DECLTYPES)
         cur = con.cursor()
         
+        cur.execute("DELETE FROM log WHERE is_running=?",(True,))
         cur.execute("UPDATE log SET is_running=? WHERE expt=?",(True, self))
         
         cur.close()
