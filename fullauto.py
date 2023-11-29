@@ -32,6 +32,7 @@ def run_experiment(expt: Experiment):
     
     expt.add_to_log()
     expt.set_running()
+    time.sleep(3)
     
     SUCCESS = True
     ABORT = False
@@ -199,4 +200,3 @@ for experiment in all_experiments:
     elif run_finished_experiments:
         run_experiment(experiment)
     gc.collect()
-    time.sleep(10)
