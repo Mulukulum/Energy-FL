@@ -95,7 +95,7 @@ def collect(
     fail_count = 0
     with open(filepath, "wb") as f:
         set_initial_parameters(sock)
-        while True:
+        while not STOP_COLLECTING:
             try:
                 d = read_measurements(sock)
             except bluetooth.BluetoothError as e:
@@ -111,8 +111,6 @@ def collect(
             # Time with seconds to 3 decimal points
             now = dt.now().strftime(r"%H:%M:%S.%f")[:-3]
             pickle.dump((now, d), f)
-            if STOP_COLLECTING:
-                break
             time.sleep(interval)
     energy_fl_logger.info("Stopped Power Collection")
     sock.close()
