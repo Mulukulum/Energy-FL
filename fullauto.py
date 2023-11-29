@@ -140,6 +140,7 @@ def run_experiment(expt: Experiment):
     aggregator.ZMQ_stop_power_collection()
     aggregator.ZMQ_shutdown()
     if ABORT:
+        time.sleep(1)
         return
     time.sleep(20)
     
