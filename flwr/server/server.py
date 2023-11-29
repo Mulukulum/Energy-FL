@@ -145,7 +145,7 @@ class Server:
                 #! ADDED MODIFICATION ADDED MODIFICATION ADDED MODIFICATION ADDED MODIFICATION
                 loss_fed, evaluate_metrics_fed, (results, failures) = res_fed
                 if len(failures) != 0:
-                    raise ValueError("Client Returned Failure")
+                    raise ValueError("One of the Clients returned Failures")
                 #! ADDED MODIFICATION ADDED MODIFICATION ADDED MODIFICATION ADDED MODIFICATION
                 if loss_fed is not None:
                     history.add_loss_distributed(
@@ -158,7 +158,9 @@ class Server:
         current_round = -1
         res_fed = self.evaluate_round(server_round=current_round, timeout=timeout)
         if res_fed is not None:
-            loss_fed, evaluate_metrics_fed, _ = res_fed
+            loss_fed, evaluate_metrics_fed, (results, failures) = res_fed
+            if len(failures) != 0:
+                raise ValueError("One of the Clients returned Failures")
             if loss_fed is not None:
                 history.add_loss_distributed(
                     server_round=current_round, loss=loss_fed
