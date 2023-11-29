@@ -47,7 +47,7 @@ UM25C_ADDR_FOR_POWER_COLLECTORS = {
 }
 
 POWER_COLLECTOR_CONNECTED_DEVICE = {
-    "pi2": "rpi3",
+    "pi2": "rpi1",
 }
 
 LOGGING_LEVEL = logging.DEBUG

@@ -189,7 +189,8 @@ def run_experiment(expt: Experiment):
         energy_fl_logger.error("Experiment Run Failed")
     else:
         expt.set_finished()
-
+    energy_fl_logger.info("Experiment Complete!")
+    
 completed_experiments = get_completed_experiments(version_str=__version__)
 
 for experiment in all_experiments:

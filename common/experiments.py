@@ -4,7 +4,7 @@
 
 # Let us initialize all the parameters that we will be using for testing
 
-__version__ = "v0.5"
+__version__ = "v0.6"
 
 import flwr as fl
 from .configuration import VALID_DATASETS, VALID_FUSION_ALGOS, VALID_MODELS
