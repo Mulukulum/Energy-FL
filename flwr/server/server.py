@@ -111,7 +111,11 @@ class Server:
                 timeout=timeout,
             )
             if res_fit is not None:
-                parameters_prime, fit_metrics, _ = res_fit  # fit_metrics_aggregated
+#! ADDED MODIFICATION ADDED MODIFICATION ADDED MODIFICATION ADDED MODIFICATION
+                parameters_prime, fit_metrics, (results, failures) = res_fit  # fit_metrics_aggregated
+                if len(failures) != 0:
+                    raise ValueError("One of the Clients returned Failures")
+#! ADDED MODIFICATION ADDED MODIFICATION ADDED MODIFICATION ADDED MODIFICATION
                 if parameters_prime:
                     self.parameters = parameters_prime
                 history.add_metrics_distributed_fit(
@@ -138,7 +142,11 @@ class Server:
             # Evaluate model on a sample of available clients
             res_fed = self.evaluate_round(server_round=current_round, timeout=timeout)
             if res_fed is not None:
-                loss_fed, evaluate_metrics_fed, _ = res_fed
+                #! ADDED MODIFICATION ADDED MODIFICATION ADDED MODIFICATION ADDED MODIFICATION
+                loss_fed, evaluate_metrics_fed, (results, failures) = res_fed
+                if len(failures) != 0:
+                    raise ValueError("Client Returned Failure")
+                #! ADDED MODIFICATION ADDED MODIFICATION ADDED MODIFICATION ADDED MODIFICATION
                 if loss_fed is not None:
                     history.add_loss_distributed(
                         server_round=current_round, loss=loss_fed

@@ -8,9 +8,12 @@ SET_SCREENSAVER = 0xE1
 
 STOP_POWER_COLLECTION = 300
 STOP_COLLECTING = False
+SUCCESS = False
 
 import bluetooth
+import pickle
 import struct
+import os
 import time
 import threading
 import zmq
@@ -80,14 +83,15 @@ def read_measurements(sock):
 def collect(
     interval: float,
 ):
-    import pickle
     from datetime import datetime as dt
 
     global UM25C_ADDRESS
     global STOP_COLLECTING
+    global SUCCESS
 
     filepath = f"Outputs/Power/{name}.pkl"
     sock = connect_to_usb_tester(UM25C_ADDRESS)
+    SUCCESS = True
     fail_count = 0
     with open(filepath, "wb") as f:
         set_initial_parameters(sock)
@@ -98,10 +102,12 @@ def collect(
                 time.sleep(0.1)
                 fail_count+=1
                 if not (fail_count % 10): 
+                    SUCCESS = False
                     energy_fl_logger.warning(f"Failcount is currently : {fail_count} Exception : {e}")
                 continue
             except Exception as e:
                 energy_fl_logger.error(f"Reading Measurements failed due to unknown error {e}")
+                SUCCESS = False
             # Time with seconds to 3 decimal points
             now = dt.now().strftime(r"%H:%M:%S.%f")[:-3]
             pickle.dump((now, d), f)
@@ -141,6 +147,18 @@ thread.start()
 wait_until_ready(STOP_POWER_COLLECTION, SOCKET)
 STOP_COLLECTING = True
 thread.join()
+
+with open(f"Outputs/Power/{name}.pkl",'rb') as f, open('Outputs/Power/temp.pkl',"wb") as g:
+    pickle.dump({"success": SUCCESS}, g)
+    while True:
+        try:
+            val = pickle.load(f)
+            pickle.dump(val, g)
+        except EOFError:
+            break
+
+os.remove(f"Outputs/Power/{name}.pkl")
+os.rename("Outputs/Power/temp.pkl", f"Outputs/Power/{name}.pkl")
 
 """
 https://sigrok.org/wiki/RDTech_UM24C

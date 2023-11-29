@@ -30,8 +30,13 @@ all_experiments = generate_all_experiments(
 
 def run_experiment(expt: Experiment):
     
+    expt.add_to_log()
+    expt.set_running()
+    
+    SUCCESS = True
+    ABORT = False
+    
     energy_fl_logger.info("\n" + str(expt))
-
     time.sleep(3)
 
     # Setup all the clients, aggregators and power collectors
@@ -120,27 +125,46 @@ def run_experiment(expt: Experiment):
         "proximal_mu": expt.proximal_mu,
     }
 
-    run_flwr_server(args=args)
+    try:
+        run_flwr_server(args=args)
+    except ValueError:
+        energy_fl_logger.critical("Server received Failure from client. Aborting File Collection")
+        expt.set_failed()
+        expt.set_not_running()
+        energy_fl_logger.error("Experiment Run Failed")
+        SUCCESS = False
+        ABORT = True
     energy_fl_logger.info("Flower Server Finished Running!")
     time.sleep(1)
     sar_process.communicate(b"\n")
     aggregator.ZMQ_stop_power_collection()
     aggregator.ZMQ_shutdown()
+    if ABORT:
+        return
     time.sleep(20)
-
+    
     #! Done!
     
     for party in parties:
         party.copy_files(expt)
     for bt in bluetooth_collectors:
-        bt.copy_files_to_aggregator()
-
+        if not bt.copy_files_to_aggregator():
+            energy_fl_logger.error(f"Power Collection Failed on {str(bt)}")
+            SUCCESS=False
+    
+    #Successful completion validation
+    
+    if not SUCCESS:
+        expt.set_failed()
+        energy_fl_logger.error("Experiment Run Failed")
+    else:
+        expt.set_finished()
 
 completed_experiments = get_completed_experiments(version_str=__version__)
 
 for experiment in all_experiments:
     if experiment not in completed_experiments:
-        run_experiment(experiment)
+        run_experiment(experiment)    
     elif run_finished_experiments:
         run_experiment(experiment)
     gc.collect()

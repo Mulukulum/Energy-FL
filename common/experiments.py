@@ -4,7 +4,7 @@
 
 # Let us initialize all the parameters that we will be using for testing
 
-__version__ = "v0.1"
+__version__ = "v0.5"
 
 import flwr as fl
 from .configuration import VALID_DATASETS, VALID_FUSION_ALGOS, VALID_MODELS
@@ -137,7 +137,70 @@ class Experiment:
         except FileExistsError:
             if wipe_contents_if_exists:
                 run(f"rm -rf Outputs/Experiments/{self.folder_name}/* ", shell=True)
+    
+    def add_to_log(self):
+        import sqlite3
+        con = sqlite3.connect(r"Outputs/Experiments/log.db", detect_types=sqlite3.PARSE_DECLTYPES)
+        cur = con.cursor()
+        
+        #Ensure that any similar experiments are removed
+        self.clear_similar()
+        
+        cur.execute("""INSERT INTO log(expt, is_finished, is_running, has_failed) VALUES(?,?,?,?)""",(self, False, False, False))
+        
+        cur.close()
+        con.commit()
+    
+    def clear_similar(self):
+        import sqlite3
+        con = sqlite3.connect(r"Outputs/Experiments/log.db", detect_types=sqlite3.PARSE_DECLTYPES)
+        cur = con.cursor()
+        
+        cur.execute("DELETE FROM log WHERE expt=?",(self,))
+        
+        cur.close()
+        con.commit()
+    
+    def set_failed(self):
+        import sqlite3
+        con = sqlite3.connect(r"Outputs/Experiments/log.db", detect_types=sqlite3.PARSE_DECLTYPES)
+        cur = con.cursor()
+        
+        cur.execute("UPDATE log SET has_failed=? WHERE expt=?",(True, self))
+        
+        cur.close()
+        con.commit()
+    
+    def set_finished(self):
+        import sqlite3
+        con = sqlite3.connect(r"Outputs/Experiments/log.db", detect_types=sqlite3.PARSE_DECLTYPES)
+        cur = con.cursor()
+        
+        cur.execute("UPDATE log SET is_finished=? WHERE expt=?",(True, self))
+        cur.execute("UPDATE log SET is_running=? WHERE expt=?",(False, self))
+        
+        cur.close()
+        con.commit()
 
+    def set_running(self):
+        import sqlite3
+        con = sqlite3.connect(r"Outputs/Experiments/log.db", detect_types=sqlite3.PARSE_DECLTYPES)
+        cur = con.cursor()
+        
+        cur.execute("UPDATE log SET is_running=? WHERE expt=?",(True, self))
+        
+        cur.close()
+        con.commit()
+    
+    def set_not_running(self):
+        import sqlite3
+        con = sqlite3.connect(r"Outputs/Experiments/log.db", detect_types=sqlite3.PARSE_DECLTYPES)
+        cur = con.cursor()
+        
+        cur.execute("UPDATE log SET is_running=? WHERE expt=?",(False, self))
+        
+        cur.close()
+        con.commit()
 
 def generate_all_experiments(
     rounds_and_epochs: list[tuple[int, int]],

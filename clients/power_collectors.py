@@ -36,5 +36,9 @@ class PowerCollector:
             ]
         )
     
-    def copy_files_to_aggregator(self):
+    def copy_files_to_aggregator(self) -> bool:
         subprocess.run([f"scp {self.ssh.client}:~/Energy-FL/Outputs/Power/{self.experiment_name}.pkl ~/Energy-FL/Outputs/Experiments/{self.experiment_folder_name}/"], shell=True)
+        from pickle import load
+        with open(f"Outputs/Experiments/{self.experiment_folder_name}/{self.experiment_name}.pkl","rb") as f:
+            val : dict = load(f)
+            return val.get("success", False)
