@@ -138,6 +138,7 @@ def run_experiment(expt: Experiment):
             ABORT = True
             energy_fl_logger.info("Sleeping for 3 minutes until next run")
             time.sleep(180)
+            return
 
     try:
         run_flwr_server(args=args)
