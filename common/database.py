@@ -35,7 +35,8 @@ def adapt_and_convert():
 
     sqlite3.register_adapter(Experiment, adapt_experiment)
 
-    def convert_experiment(val: str):
+    def convert_experiment(val : bytes):
+        val = val.decode()
         (
             version,
             model,
