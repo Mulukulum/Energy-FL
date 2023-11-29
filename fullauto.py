@@ -53,6 +53,19 @@ def run_experiment(expt: Experiment):
         Party(ip=ip, username=username)
         for username, ip in configuration.IP_CLIENTS.items()
     ]
+    
+    for party in parties:
+        if not party.check_client_online():
+            ABORT = True
+            SUCCESS = False
+            energy_fl_logger.critical(f"Client {str(party)} was detected offline")
+            expt.set_failed()
+            expt.set_not_running()
+            energy_fl_logger.error("Experiment Run Failed")
+            SUCCESS = False
+            ABORT = True
+            energy_fl_logger.info("Sleeping for 3 minutes until next run")
+            time.sleep(180)
 
     bluetooth_collectors: list[PowerCollector] = []
 

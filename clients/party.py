@@ -104,3 +104,14 @@ if [ -d Outputs/Experiments/{exp.folder_name} ]; then echo '{num}' ; fi ;
                 f"python -m clients.scripts.old_client --agg_ip {agg_ip} --agg_port {agg_port} --cid {cid} --dataset {dataset} --client_ip {self.ip} --num_parties {num_parties} --pi_name {self.username} --expt_name {expt_name} "
             ]
         )
+    
+    def check_client_online(self):
+        try:
+            proc = subprocess.run(f"ssh {self.username}@{self.ip} << EOF \n exit ; \n EOF ", shell=True, timeout = 20)
+            if proc.returncode != 0:
+                return False
+            else:
+                return True
+        except:
+            return False
+            
