@@ -42,3 +42,6 @@ class PowerCollector:
         with open(f"Outputs/Experiments/{self.experiment_folder_name}/{self.experiment_name}.pkl","rb") as f:
             val : dict = load(f)
             return val.get("success", False)
+    
+    def reboot_collector(self):
+        self.ssh.run(['echo "user123" | sudo -S reboot ;'])

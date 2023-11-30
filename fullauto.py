@@ -175,13 +175,17 @@ def run_experiment(expt: Experiment):
     time.sleep(20)
     
     #! Done!
-    
+    WAIT_FOR_REBOOT = False
     for party in parties:
         party.copy_files(expt)
     for bt in bluetooth_collectors:
         if not bt.copy_files_to_aggregator():
             energy_fl_logger.error(f"Power Collection Failed on {str(bt)}")
             SUCCESS=False
+            bt.reboot_collector()
+            WAIT_FOR_REBOOT = True
+            energy_fl_logger.info(f"Rebooted {str(bt)}")
+    
     
     #Successful completion validation
     
@@ -191,6 +195,9 @@ def run_experiment(expt: Experiment):
     else:
         expt.set_finished()
     energy_fl_logger.info("Experiment Complete!")
+    if WAIT_FOR_REBOOT:
+        energy_fl_logger.info("Waiting 1 minute for devices to finish reboot")
+        time.sleep(60)
     
 completed_experiments = get_completed_experiments(version_str=__version__)
 
