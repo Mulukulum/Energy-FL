@@ -71,6 +71,7 @@ def run_experiment(expt: Experiment):
                 bluetooth_address=bt_addr,
                 zmq_broadcast_port=configuration.AGGREGATOR_ZMQ_BROADCAST_PORT,
                 experiment=expt,
+                paired=True
             )
         )
 
