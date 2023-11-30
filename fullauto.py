@@ -104,7 +104,7 @@ def run_experiment(expt: Experiment):
         if not paired:
             collector.pair_to_tester().wait()
         energy_fl_logger.info(f"{str(collector)} was paired to tester")
-
+    paired = True
     # Ready to start the experiment
 
     aggregator.ZMQ_setup()
