@@ -30,6 +30,8 @@ all_experiments = generate_all_experiments(
 
 def run_experiment(expt: Experiment):
     
+    global paired
+    
     expt.add_to_log()
     expt.set_running()
     time.sleep(3)
@@ -99,7 +101,8 @@ def run_experiment(expt: Experiment):
 
     # Setup Bluetooth
     for collector in bluetooth_collectors:
-        collector.pair_to_tester().wait()
+        if not paired:
+            collector.pair_to_tester().wait()
         energy_fl_logger.info(f"{str(collector)} was paired to tester")
 
     # Ready to start the experiment
@@ -185,8 +188,7 @@ def run_experiment(expt: Experiment):
             bt.reboot_collector()
             WAIT_FOR_REBOOT = True
             energy_fl_logger.info(f"Rebooted {str(bt)}")
-    
-    
+            paired = False
     #Successful completion validation
     
     if not SUCCESS:
@@ -200,6 +202,7 @@ def run_experiment(expt: Experiment):
         time.sleep(60)
     
 completed_experiments = get_completed_experiments(version_str=__version__)
+paired = False
 
 for experiment in all_experiments:
     if experiment not in completed_experiments:
