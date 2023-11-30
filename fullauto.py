@@ -202,7 +202,7 @@ def run_experiment(expt: Experiment):
         time.sleep(60)
     
 completed_experiments = get_completed_experiments(version_str=__version__)
-paired = False
+paired = True
 
 for experiment in all_experiments:
     if experiment not in completed_experiments:

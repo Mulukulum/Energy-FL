@@ -11,6 +11,7 @@ class PowerCollector:
         bluetooth_address: str,
         zmq_broadcast_port: int,
         experiment: Experiment,
+        paired : bool = False,
     ) -> None:
         self.ip = ip
         self.username = username
@@ -20,6 +21,7 @@ class PowerCollector:
         self.broadcast_port = zmq_broadcast_port
         self.experiment_folder_name = experiment.folder_name
         self.experiment_name = f"{self.experiment_folder_name}_{self.party_username}"
+        self.paired = paired
 
     def __repr__(self) -> str:
         return f"{self.party_username}@{self.ip} using {self.tester_address} to log {self.party_username}"
